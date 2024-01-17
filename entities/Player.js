@@ -1,4 +1,5 @@
-import { context } from "../main.js";
+import { canvas, context } from "../main.js";
+import { CanvasController } from "../controllers/CanvasController.js";
 
 export class Player {
   constructor() {
@@ -12,6 +13,11 @@ export class Player {
       leftSide: this.x,
       rightSide: this.x + this.width,
     };
+    this.velocity = {
+      x: 0,
+      y: 0,
+    };
+    this.gravity = 1;
   }
   draw() {
     context.fillStyle = "red";
@@ -19,7 +25,13 @@ export class Player {
   }
 
   update() {
-    this.y++;
+    this.y += this.velocity.y;
     this.sides.bottom = this.y + this.height;
+
+    if (!CanvasController.checkCollision(this.sides.bottom, canvas.height)) {
+      this.velocity.y += this.gravity;
+    } else {
+      this.velocity.y = 0;
+    }
   }
 }

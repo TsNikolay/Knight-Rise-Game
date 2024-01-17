@@ -2,13 +2,24 @@ import { canvas, context, player } from "../main.js";
 export class CanvasController {
   constructor() {}
 
-  static animate = () => {
-    window.requestAnimationFrame(this.animate);
-    this.clear();
-    player.draw(100, player.y);
-    if (this.checkCollision(player.sides.bottom, canvas.height)) {
+  static lastFrameTime = 0;
+
+  static animate = (timestamp) => {
+    // Вычисляем разницу во времени с предыдущим кадром
+    const deltaTime = (timestamp - this.lastFrameTime) / 1000; // переводим в секунды
+
+    // Проверяем, прошло ли достаточно времени (10 миллисекунд)
+    if (deltaTime >= 0.01) {
+      this.lastFrameTime = timestamp;
+
+      // Код анимации
+      this.clear();
+      player.draw(100, player.y);
       player.update();
     }
+
+    // Запускаем следующий кадр
+    window.requestAnimationFrame(this.animate); //requestAnimationFrame сразу параметром передаёт текущее время
   };
 
   static clear = () => {
@@ -17,6 +28,6 @@ export class CanvasController {
   };
 
   static checkCollision = (element, obstacle) => {
-    return element < obstacle;
+    return element > obstacle;
   };
 }
