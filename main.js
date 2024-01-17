@@ -1,8 +1,11 @@
-const canvas = document.querySelector("canvas");
-const context = canvas.getContext("2d");
+import { Player } from "./entities/Player.js";
+import { CanvasController } from "./controllers/CanvasController.js";
+
+export const canvas = document.querySelector("canvas");
+export const context = canvas.getContext("2d");
+export const player = new Player();
 
 canvas.width = 64 * 16; //1024
 canvas.height = 64 * 9; //576
 
-context.fillStyle = "white";
-context.fillRect(0, 0, canvas.width, canvas.height);
+CanvasController.animate();
