@@ -6,8 +6,8 @@ export const canvas = document.querySelector("canvas");
 export const context = canvas.getContext("2d");
 export const player = new Player();
 
-canvas.width = 64 * 16; //1024
-canvas.height = 64 * 9; //576
+canvas.width = 40 * 24; //1024
+canvas.height = 40 * 14; //576
 
 MovementController.listenKeyDown();
 MovementController.listenKeyUp();
