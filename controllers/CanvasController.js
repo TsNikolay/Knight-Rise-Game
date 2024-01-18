@@ -16,6 +16,7 @@ export class CanvasController {
       this.clear();
       player.draw(100, player.y);
       player.update();
+      player.handleKeysInput();
     }
 
     // Запускаем следующий кадр
@@ -28,6 +29,6 @@ export class CanvasController {
   };
 
   static checkCollision = (element, obstacle) => {
-    return element > obstacle;
+    return element >= obstacle;
   };
 }
