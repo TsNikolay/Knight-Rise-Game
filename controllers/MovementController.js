@@ -45,7 +45,7 @@ export class MovementController {
           this.keys.d.pressed = false;
           break;
         case "w":
-        case "ы":
+        case "ц":
           this.keys.w.pressed = false;
           break;
       }
