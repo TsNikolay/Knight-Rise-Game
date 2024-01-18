@@ -4,7 +4,7 @@ export class CanvasController {
   constructor() {}
 
   static lastFrameTime = 0;
-  static backgroundYard = new Sprite("../data/yard.png", 0, 0);
+  static backgroundYard = new Sprite("./data/yard.png", 0, 0);
 
   static animate = (timestamp) => {
     // Вычисляем разницу во времени с предыдущим кадром
