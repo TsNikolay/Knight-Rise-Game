@@ -9,21 +9,17 @@ export class MovementController {
 
   static listenKeyDown() {
     window.addEventListener("keydown", (event) => {
-      switch (event.key) {
-        case "w":
-        case "ц":
+      switch (event.code) {
+        case "KeyW":
           this.keys.w.pressed = true;
           break;
-        case "a":
-        case "ф":
+        case "KeyA":
           this.keys.a.pressed = true;
           break;
-        case "d":
-        case "в":
+        case "KeyD":
           this.keys.d.pressed = true;
           break;
-        case "s":
-        case "ы":
+        case "KeyS":
           //вниз
 
           break;
@@ -35,17 +31,14 @@ export class MovementController {
 
   static listenKeyUp() {
     window.addEventListener("keyup", (event) => {
-      switch (event.key) {
-        case "a":
-        case "ф":
+      switch (event.code) {
+        case "KeyA":
           this.keys.a.pressed = false;
           break;
-        case "d":
-        case "в":
+        case "KeyD":
           this.keys.d.pressed = false;
           break;
-        case "w":
-        case "ц":
+        case "KeyW":
           this.keys.w.pressed = false;
           break;
       }
