@@ -1,11 +1,14 @@
 import { canvas, context, player } from "../main.js";
-import { Sprite } from "../entities/Sprite.js";
+import { Location } from "../entities/Location.js";
 import { collisionsCells } from "../utils/CollisionsUtils.js";
 export class CanvasController {
   constructor() {}
 
   static lastFrameTime = 0;
-  static backgroundYard = new Sprite("./data/images/yard.png", 0, 0);
+  static backgroundYard = new Location(
+    "./data/images/yard.png",
+    collisionsCells,
+  );
 
   static animate = (timestamp) => {
     // Вычисляем разницу во времени с предыдущим кадром
@@ -21,6 +24,7 @@ export class CanvasController {
       collisionsCells.forEach((collisionCell) => {
         collisionCell.draw();
       });
+
       player.draw(100, player.y);
       player.update();
       player.handleKeysInput();
@@ -33,9 +37,5 @@ export class CanvasController {
   static clear = () => {
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
-  };
-
-  static checkCollision = (element, obstacle) => {
-    return element >= obstacle;
   };
 }

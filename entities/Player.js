@@ -1,6 +1,7 @@
-import { canvas, context, player } from "../main.js";
-import { CanvasController } from "../controllers/CanvasController.js";
+import { context, player } from "../main.js";
+
 import { MovementController } from "../controllers/MovementController.js";
+import { collisionsCells } from "../utils/CollisionsUtils.js";
 
 export class Player {
   constructor() {
@@ -30,17 +31,69 @@ export class Player {
 
   update() {
     this.x += this.velocity.x;
-    this.y += this.velocity.y;
-    this.sides.bottom = this.y + this.height;
+    this.handleHorizontalCollisions(collisionsCells);
 
-    if (!CanvasController.checkCollision(this.sides.bottom, canvas.height)) {
-      this.velocity.y += this.gravity;
-    } else {
-      this.y = canvas.height - this.height; // если персонаж вылез за карту
+    this.applyGravity();
+    this.handleVerticalCollisions(collisionsCells);
+  }
+
+  checkCollisions(collisionBlock) {
+    return (
+      this.sides.leftSide <= collisionBlock.sides.rightSide &&
+      this.sides.rightSide >= collisionBlock.sides.leftSide &&
+      this.sides.bottom >= collisionBlock.sides.top &&
+      this.sides.top <= collisionBlock.sides.bottom
+    );
+  }
+
+  handleHorizontalCollisions = (collisionsCells) => {
+    this.updateSidesValues();
+    for (let i = 0; i < collisionsCells.length; i++) {
+      const collisionBlock = collisionsCells[i];
+      if (this.checkCollisions(collisionBlock)) {
+        this.preventHorizontalCollision(collisionBlock);
+      }
+    }
+  };
+
+  handleVerticalCollisions = (collisionsCells) => {
+    this.updateSidesValues();
+    for (let i = 0; i < collisionsCells.length; i++) {
+      const collisionBlock = collisionsCells[i];
+      if (this.checkCollisions(collisionBlock)) {
+        this.preventVerticalCollision(collisionBlock);
+      }
+    }
+  };
+
+  preventHorizontalCollision(collisionBlock) {
+    if (this.velocity.x < -1) {
+      //Если идем влево
+      this.x = collisionBlock.x + collisionBlock.width + 0.01; //0.01 чтобы не точно на границе блока мы были
+    }
+    if (this.velocity.x > 1) {
+      //Если идем вправо
+      this.x = collisionBlock.x - this.width - 0.01; //0.01 чтобы не точно на границе блока мы были
+    }
+  }
+  preventVerticalCollision(collisionBlock) {
+    if (this.velocity.y < 0) {
+      //Если идем вверх
       this.velocity.y = 0;
+      this.y = collisionBlock.y + collisionBlock.height + 0.01; //0.01 чтобы не точно на границе блока мы были
+      MovementController.keys.w.pressed = false;
+    }
+    if (this.velocity.y > 0) {
+      //Если идем вниз
+      this.velocity.y = 0;
+      this.y = collisionBlock.y - this.height - 0.01; //0.01 чтобы не точно на границе блока мы были
     }
   }
 
+  applyGravity() {
+    this.velocity.y += this.gravity;
+    this.y += this.velocity.y;
+  }
   handleKeysInput() {
     this.stopMoving();
 
@@ -71,5 +124,14 @@ export class Player {
 
   stopMoving() {
     player.velocity.x = 0;
+  }
+
+  updateSidesValues() {
+    this.sides = {
+      bottom: this.y + this.height,
+      top: this.y,
+      leftSide: this.x,
+      rightSide: this.x + this.width,
+    };
   }
 }

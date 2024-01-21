@@ -15,7 +15,7 @@ Array.prototype.createObjectsFromMatrix = function () {
   const objects = [];
   this.forEach((row, y) => {
     row.forEach((cell, x) => {
-      if (cell === 800) {
+      if (cell === 799) {
         objects.push(new CollisionBlock(x * 40, y * 40));
       }
     });
