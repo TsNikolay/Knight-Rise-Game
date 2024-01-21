@@ -25,7 +25,7 @@ export class CanvasController {
         collisionCell.draw();
       });
 
-      player.draw(100, player.y);
+      player.draw();
       player.update();
       player.handleKeysInput();
     }

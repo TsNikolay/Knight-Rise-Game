@@ -1,14 +1,13 @@
-import { context, player } from "../main.js";
+import { player } from "../main.js";
 
 import { MovementController } from "../controllers/MovementController.js";
 import { collisionsCells } from "../utils/CollisionsUtils.js";
+import { Sprite } from "./Sprite.js";
 
-export class Player {
-  constructor() {
-    this.x = 100;
-    this.y = 100;
-    this.width = 85;
-    this.height = 85;
+export class Player extends Sprite {
+  constructor(imgSrc, x, y, frameRate) {
+    super(imgSrc, x, y, frameRate);
+
     this.sides = {
       bottom: this.y + this.height,
       top: this.y,
@@ -23,10 +22,6 @@ export class Player {
     this.gravity = 1;
     this.jumpHeight = -22; //минус потому что чем меньше "y" тем выше прыжок
     this.runningSpeed = 7;
-  }
-  draw() {
-    context.fillStyle = "red";
-    context.fillRect(this.x, this.y, this.width, this.height);
   }
 
   update() {
