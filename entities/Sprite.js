@@ -1,7 +1,7 @@
 import { context } from "../main.js";
 
 export class Sprite {
-  constructor(imgSrc, x, y, frameRate) {
+  constructor(imgSrc, x, y, frameRate, animations) {
     this.x = x;
     this.y = y;
 
@@ -17,6 +17,15 @@ export class Sprite {
     this.currentFrame = 0;
     this.framesPast = 0;
     this.framesSpeed = 15;
+    this.animations = animations;
+
+    if (this.animations) {
+      for (let key in this.animations) {
+        const image = new Image();
+        image.src = this.animations[key].imageSrc;
+        this.animations[key].image = image;
+      }
+    }
   }
 
   draw() {

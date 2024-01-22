@@ -5,8 +5,8 @@ import { collisionsCells } from "../utils/CollisionsUtils.js";
 import { Sprite } from "./Sprite.js";
 
 export class Player extends Sprite {
-  constructor(imgSrc, x, y, frameRate) {
-    super(imgSrc, x, y, frameRate);
+  constructor(imgSrc, x, y, frameRate, animations) {
+    super(imgSrc, x, y, frameRate, animations);
 
     this.sides = {
       bottom: this.y + this.height,
@@ -21,7 +21,7 @@ export class Player extends Sprite {
     };
     this.gravity = 1;
     this.jumpHeight = -22; //минус потому что чем меньше "y" тем выше прыжок
-    this.runningSpeed = 7;
+    this.runningSpeed = 5;
   }
 
   update() {
@@ -111,13 +111,37 @@ export class Player extends Sprite {
     this.stopMoving();
 
     if (MovementController.keys.a.pressed) {
+      this.switchSprite("runLeft");
+      this.lastDirection = "left";
       this.moveLeft();
     }
     if (MovementController.keys.d.pressed) {
+      this.switchSprite("runRight");
+      this.lastDirection = "right";
       this.moveRight();
     }
+
     if (MovementController.keys.w.pressed) {
       this.jump();
+
+      if (this.lastDirection === "left") {
+        this.switchSprite("jumpLeft");
+      } else {
+        this.switchSprite("jumpRight");
+      }
+    }
+
+    if (
+      //Если бы сделал else if и просто else, персонаж бы не мог одновременно прыгать и бегать (с return тоже самое)
+      !MovementController.keys.a.pressed &&
+      !MovementController.keys.d.pressed &&
+      !MovementController.keys.w.pressed
+    ) {
+      if (player.lastDirection === "left") {
+        this.switchSprite("inactionLeft");
+      } else {
+        this.switchSprite("inactionRight");
+      }
     }
   }
 
@@ -155,5 +179,14 @@ export class Player extends Sprite {
       width: 45,
       height: 70,
     };
+  }
+
+  switchSprite(name) {
+    if (this.image === this.animations[name].image) return;
+
+    this.currentFrame = 0;
+    this.image = this.animations[name].image;
+    this.frameRate = this.animations[name].frameRate;
+    this.framesSpeed = this.animations[name].framesSpeed;
   }
 }

@@ -21,9 +21,9 @@ export class CanvasController {
       // Код анимации
       this.clear();
       this.backgroundYard.draw();
-      collisionsCells.forEach((collisionCell) => {
-        collisionCell.draw();
-      });
+      // collisionsCells.forEach((collisionCell) => {
+      //   collisionCell.draw();
+      // });
 
       player.draw();
       player.update();
