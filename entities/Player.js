@@ -26,18 +26,31 @@ export class Player extends Sprite {
 
   update() {
     this.x += this.velocity.x;
+    this.updateHitbox();
     this.handleHorizontalCollisions(collisionsCells);
-
     this.applyGravity();
+    this.updateHitbox();
+
+    //Отрисовка границ хитбокса и игрока
+    // context.fillStyle = "rgba(0,0,255,0.3)";
+    // context.fillRect(this.x, this.y, this.width, this.height);
+    // context.fillStyle = "rgba(0,255,0,0.3)";
+    // context.fillRect(
+    //   this.hitbox.x,
+    //   this.hitbox.y,
+    //   this.hitbox.width,
+    //   this.hitbox.height,
+    // );
+
     this.handleVerticalCollisions(collisionsCells);
   }
 
   checkCollisions(collisionBlock) {
     return (
-      this.sides.leftSide <= collisionBlock.sides.rightSide &&
-      this.sides.rightSide >= collisionBlock.sides.leftSide &&
-      this.sides.bottom >= collisionBlock.sides.top &&
-      this.sides.top <= collisionBlock.sides.bottom
+      this.hitbox.x <= collisionBlock.sides.rightSide &&
+      this.hitbox.x + this.hitbox.width >= collisionBlock.sides.leftSide &&
+      this.hitbox.y + this.hitbox.height >= collisionBlock.sides.top &&
+      this.hitbox.y <= collisionBlock.sides.bottom
     );
   }
 
@@ -47,6 +60,7 @@ export class Player extends Sprite {
       const collisionBlock = collisionsCells[i];
       if (this.checkCollisions(collisionBlock)) {
         this.preventHorizontalCollision(collisionBlock);
+        break;
       }
     }
   };
@@ -62,26 +76,30 @@ export class Player extends Sprite {
   };
 
   preventHorizontalCollision(collisionBlock) {
-    if (this.velocity.x < -1) {
+    if (this.velocity.x < 0) {
       //Если идем влево
-      this.x = collisionBlock.x + collisionBlock.width + 0.01; //0.01 чтобы не точно на границе блока мы были
+      const offset = this.hitbox.x - this.x;
+      this.x = collisionBlock.x + collisionBlock.width - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
     }
-    if (this.velocity.x > 1) {
+    if (this.velocity.x > 0) {
       //Если идем вправо
-      this.x = collisionBlock.x - this.width - 0.01; //0.01 чтобы не точно на границе блока мы были
+      const offset = this.hitbox.x - this.x + this.hitbox.width;
+      this.x = collisionBlock.x - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
     }
   }
   preventVerticalCollision(collisionBlock) {
     if (this.velocity.y < 0) {
       //Если идем вверх
       this.velocity.y = 0;
-      this.y = collisionBlock.y + collisionBlock.height + 0.01; //0.01 чтобы не точно на границе блока мы были
+      const offset = this.hitbox.y - this.y;
+      this.y = collisionBlock.y + collisionBlock.height - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
       MovementController.keys.w.pressed = false;
     }
     if (this.velocity.y > 0) {
       //Если идем вниз
       this.velocity.y = 0;
-      this.y = collisionBlock.y - this.height - 0.01; //0.01 чтобы не точно на границе блока мы были
+      const offset = this.hitbox.y - this.y + this.hitbox.height;
+      this.y = collisionBlock.y - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
     }
   }
 
@@ -127,6 +145,15 @@ export class Player extends Sprite {
       top: this.y,
       leftSide: this.x,
       rightSide: this.x + this.width,
+    };
+  }
+
+  updateHitbox() {
+    this.hitbox = {
+      x: this.x + 30,
+      y: this.y + 30,
+      width: 45,
+      height: 70,
     };
   }
 }
