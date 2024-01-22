@@ -40,5 +40,8 @@ export const animationsData = {
     framesSpeed: 15,
     loop: false,
     imageSrc: "./data/images/player_sprites/Player_EnterDoor.png",
+    onComplete: () => {
+      console.log(1);
+    },
   },
 };

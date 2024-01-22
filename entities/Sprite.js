@@ -38,6 +38,7 @@ export class Sprite {
 
     this.loop = loop;
     this.autoplay = autoplay;
+    this.currentAnimation;
   }
 
   draw() {
@@ -65,6 +66,16 @@ export class Sprite {
         this.currentFrame++;
       } else if (this.loop) {
         this.currentFrame = 0;
+      }
+    }
+
+    if (this.currentAnimation && this.currentAnimation.onComplete) {
+      if (
+        this.currentFrame === this.frameRate - 1 &&
+        !this.currentAnimation.isActive
+      ) {
+        this.currentAnimation.onComplete();
+        this.currentAnimation.isActive = true;
       }
     }
   }
