@@ -35,4 +35,10 @@ export const animationsData = {
     loop: true,
     imageSrc: "./data/images/player_sprites/Player_Jump_Right.png",
   },
+  enterDoor: {
+    frameRate: 6,
+    framesSpeed: 15,
+    loop: false,
+    imageSrc: "./data/images/player_sprites/Player_EnterDoor.png",
+  },
 };

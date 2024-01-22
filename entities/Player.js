@@ -3,17 +3,20 @@ import { player } from "../main.js";
 import { MovementController } from "../controllers/MovementController.js";
 import { collisionsCells } from "../utils/CollisionsUtils.js";
 import { Sprite } from "./Sprite.js";
+import { doorsData } from "../data/doorsData.js";
 
 export class Player extends Sprite {
-  constructor(imgSrc, x, y, frameRate, animations) {
-    super(imgSrc, x, y, frameRate, animations);
-
-    this.sides = {
-      bottom: this.y + this.height,
-      top: this.y,
-      leftSide: this.x,
-      rightSide: this.x + this.width,
-    };
+  constructor({
+    imgSrc,
+    x,
+    y,
+    animations,
+    frameRate,
+    framesSpeed,
+    loop,
+    autoplay,
+  }) {
+    super({ imgSrc, x, y, animations, frameRate, framesSpeed, loop, autoplay });
 
     this.velocity = {
       x: 0,
@@ -47,15 +50,24 @@ export class Player extends Sprite {
 
   checkCollisions(collisionBlock) {
     return (
-      this.hitbox.x <= collisionBlock.sides.rightSide &&
-      this.hitbox.x + this.hitbox.width >= collisionBlock.sides.leftSide &&
-      this.hitbox.y + this.hitbox.height >= collisionBlock.sides.top &&
-      this.hitbox.y <= collisionBlock.sides.bottom
+      this.hitbox.x <= collisionBlock.x + collisionBlock.width &&
+      this.hitbox.x + this.hitbox.width >= collisionBlock.x &&
+      this.hitbox.y + this.hitbox.height >= collisionBlock.y &&
+      this.hitbox.y <= collisionBlock.y + collisionBlock.height
+    );
+  }
+
+  checkOverlapping(objectToOverlap) {
+    return (
+      this.hitbox.x + this.hitbox.width <=
+        objectToOverlap.x + objectToOverlap.width &&
+      this.hitbox.x >= objectToOverlap.x &&
+      this.hitbox.y + this.hitbox.height >= objectToOverlap.y &&
+      this.hitbox.y <= objectToOverlap.y + objectToOverlap.height
     );
   }
 
   handleHorizontalCollisions = (collisionsCells) => {
-    this.updateSidesValues();
     for (let i = 0; i < collisionsCells.length; i++) {
       const collisionBlock = collisionsCells[i];
       if (this.checkCollisions(collisionBlock)) {
@@ -66,7 +78,6 @@ export class Player extends Sprite {
   };
 
   handleVerticalCollisions = (collisionsCells) => {
-    this.updateSidesValues();
     for (let i = 0; i < collisionsCells.length; i++) {
       const collisionBlock = collisionsCells[i];
       if (this.checkCollisions(collisionBlock)) {
@@ -108,6 +119,8 @@ export class Player extends Sprite {
     this.y += this.velocity.y;
   }
   handleKeysInput() {
+    if (this.preventInput) return;
+
     this.stopMoving();
 
     if (MovementController.keys.a.pressed) {
@@ -131,11 +144,25 @@ export class Player extends Sprite {
       }
     }
 
+    if (MovementController.keys.e.pressed) {
+      for (let i = 0; i < doorsData.length; i++) {
+        const door = doorsData[i];
+        if (this.checkOverlapping(door)) {
+          this.preventInput = true;
+          const offset = 9;
+          this.x = door.x + offset;
+          door.setAutoplayTrue();
+          this.switchSprite("enterDoor");
+        }
+      }
+    }
+
     if (
       //Если бы сделал else if и просто else, персонаж бы не мог одновременно прыгать и бегать (с return тоже самое)
       !MovementController.keys.a.pressed &&
       !MovementController.keys.d.pressed &&
-      !MovementController.keys.w.pressed
+      !MovementController.keys.w.pressed &&
+      !MovementController.keys.e.pressed
     ) {
       if (player.lastDirection === "left") {
         this.switchSprite("inactionLeft");
@@ -163,15 +190,6 @@ export class Player extends Sprite {
     player.velocity.x = 0;
   }
 
-  updateSidesValues() {
-    this.sides = {
-      bottom: this.y + this.height,
-      top: this.y,
-      leftSide: this.x,
-      rightSide: this.x + this.width,
-    };
-  }
-
   updateHitbox() {
     this.hitbox = {
       x: this.x + 30,
@@ -188,5 +206,6 @@ export class Player extends Sprite {
     this.image = this.animations[name].image;
     this.frameRate = this.animations[name].frameRate;
     this.framesSpeed = this.animations[name].framesSpeed;
+    this.loop = this.animations[name].loop;
   }
 }

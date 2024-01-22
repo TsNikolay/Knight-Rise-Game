@@ -1,7 +1,7 @@
 import { context } from "../main.js";
 
 export class Location {
-  constructor(backgroundImageSrc, collisionCells = []) {
+  constructor({ backgroundImageSrc, collisionCells = [] }) {
     this.backgroundImage = new Image();
     this.backgroundImage.src = backgroundImageSrc;
     this.collisionCells = collisionCells;

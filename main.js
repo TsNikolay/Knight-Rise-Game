@@ -5,13 +5,15 @@ import { animationsData } from "./data/animationsData.js";
 
 export const canvas = document.querySelector("canvas");
 export const context = canvas.getContext("2d");
-export const player = new Player(
-  "./data/images/player_sprites/Player_Inaction_Right.png",
-  100,
-  100,
-  4,
-  animationsData,
-);
+export const player = new Player({
+  imgSrc: "./data/images/player_sprites/Player_Inaction_Right.png",
+  x: 100,
+  y: 100,
+  animations: animationsData,
+  frameRate: 4,
+  framesSpeed: 15,
+  loop: true,
+});
 
 canvas.width = 40 * 24; //1024
 canvas.height = 40 * 14; //576

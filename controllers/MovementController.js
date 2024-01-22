@@ -4,6 +4,7 @@ export class MovementController {
     a: { pressed: false },
     s: { pressed: false },
     d: { pressed: false },
+    e: { pressed: false },
   };
   constructor() {}
 
@@ -23,6 +24,9 @@ export class MovementController {
           //вниз
 
           break;
+        case "KeyE":
+          this.keys.e.pressed = true;
+          break;
         default:
           console.log(event.key);
       }
@@ -40,6 +44,9 @@ export class MovementController {
           break;
         case "KeyW":
           this.keys.w.pressed = false;
+          break;
+        case "KeyE":
+          this.keys.e.pressed = false;
           break;
       }
     });

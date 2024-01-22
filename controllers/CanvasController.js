@@ -1,14 +1,15 @@
 import { canvas, context, player } from "../main.js";
 import { Location } from "../entities/Location.js";
 import { collisionsCells } from "../utils/CollisionsUtils.js";
+import { doorsData } from "../data/doorsData.js";
 export class CanvasController {
   constructor() {}
 
   static lastFrameTime = 0;
-  static backgroundYard = new Location(
-    "./data/images/yard.png",
-    collisionsCells,
-  );
+  static backgroundYard = new Location({
+    backgroundImageSrc: "./data/images/yard.png",
+    collisionCells: collisionsCells,
+  });
 
   static animate = (timestamp) => {
     // Вычисляем разницу во времени с предыдущим кадром
@@ -24,6 +25,10 @@ export class CanvasController {
       // collisionsCells.forEach((collisionCell) => {
       //   collisionCell.draw();
       // });
+
+      doorsData.forEach((door) => {
+        door.draw();
+      });
 
       player.draw();
       player.update();
