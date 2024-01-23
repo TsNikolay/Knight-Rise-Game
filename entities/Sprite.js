@@ -38,7 +38,7 @@ export class Sprite {
 
     this.loop = loop;
     this.autoplay = autoplay;
-    this.currentAnimation;
+    this.currentAnimation = null;
   }
 
   draw() {

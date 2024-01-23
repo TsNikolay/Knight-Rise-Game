@@ -1,9 +1,7 @@
 import { player } from "../main.js";
-
 import { MovementController } from "../controllers/MovementController.js";
-import { collisionsCells } from "../utils/CollisionsUtils.js";
 import { Sprite } from "./Sprite.js";
-import { doorsData } from "../data/doorsData.js";
+import { doors, levelCollisionsCells } from "../data/levelsData.js";
 
 export class Player extends Sprite {
   constructor({
@@ -30,7 +28,7 @@ export class Player extends Sprite {
   update() {
     this.x += this.velocity.x;
     this.updateHitbox();
-    this.handleHorizontalCollisions(collisionsCells);
+    this.handleHorizontalCollisions(levelCollisionsCells);
     this.applyGravity();
     this.updateHitbox();
 
@@ -45,7 +43,7 @@ export class Player extends Sprite {
     //   this.hitbox.height,
     // );
 
-    this.handleVerticalCollisions(collisionsCells);
+    this.handleVerticalCollisions(levelCollisionsCells);
   }
 
   checkCollisions(collisionBlock) {
@@ -145,9 +143,10 @@ export class Player extends Sprite {
     }
 
     if (MovementController.keys.e.pressed) {
-      for (let i = 0; i < doorsData.length; i++) {
-        const door = doorsData[i];
+      for (let i = 0; i < doors.length; i++) {
+        const door = doors[i];
         if (this.checkOverlapping(door)) {
+          this.velocity.x = 0;
           this.preventInput = true;
           const offset = 9;
           this.x = door.x + offset;
@@ -192,9 +191,9 @@ export class Player extends Sprite {
 
   updateHitbox() {
     this.hitbox = {
-      x: this.x + 30,
+      x: this.x + 35,
       y: this.y + 30,
-      width: 45,
+      width: 38,
       height: 70,
     };
   }

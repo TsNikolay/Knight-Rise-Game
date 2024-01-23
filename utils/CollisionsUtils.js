@@ -1,4 +1,3 @@
-import { yardCollisionsLayout } from "../data/collisionsLayout.js";
 import { CollisionBlock } from "../entities/CollisionBlock.js";
 
 //Массив-шаблон в матрицу
@@ -15,7 +14,7 @@ Array.prototype.createObjectsFromMatrix = function () {
   const objects = [];
   this.forEach((row, y) => {
     row.forEach((cell, x) => {
-      if (cell === 799) {
+      if (cell === 1) {
         objects.push(new CollisionBlock({ x: x * 40, y: y * 40 }));
       }
     });
@@ -23,6 +22,6 @@ Array.prototype.createObjectsFromMatrix = function () {
   return objects;
 };
 
-export const collisionsCells = yardCollisionsLayout
-  .convertToMatrix24by14()
-  .createObjectsFromMatrix();
+export const createCollisionsArray = (array) => {
+  return array.convertToMatrix24by14().createObjectsFromMatrix();
+};

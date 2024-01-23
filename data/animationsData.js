@@ -1,3 +1,5 @@
+import { level, levelIncrease, levels } from "./levelsData.js";
+
 export const animationsData = {
   inactionRight: {
     frameRate: 4,
@@ -41,7 +43,8 @@ export const animationsData = {
     loop: false,
     imageSrc: "./data/images/player_sprites/Player_EnterDoor.png",
     onComplete: () => {
-      console.log(1);
+      levelIncrease();
+      levels[level].init();
     },
   },
 };
