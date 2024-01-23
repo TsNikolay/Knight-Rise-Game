@@ -1,20 +1,32 @@
-import { player } from "../main.js";
 import { MovementController } from "../controllers/MovementController.js";
 import { Sprite } from "./Sprite.js";
-import { doors, levelCollisionsCells } from "../data/levelsData.js";
+import { doors, ladders, levelCollisionsCells } from "../data/levelsData.js";
 
 export class Player extends Sprite {
   constructor({
     imgSrc,
     x,
     y,
+    width,
+    height,
     animations,
     frameRate,
     framesSpeed,
     loop,
     autoplay,
   }) {
-    super({ imgSrc, x, y, animations, frameRate, framesSpeed, loop, autoplay });
+    super({
+      imgSrc,
+      x,
+      y,
+      width,
+      height,
+      animations,
+      frameRate,
+      framesSpeed,
+      loop,
+      autoplay,
+    });
 
     this.velocity = {
       x: 0,
@@ -23,15 +35,27 @@ export class Player extends Sprite {
     this.gravity = 1;
     this.jumpHeight = -22; //минус потому что чем меньше "y" тем выше прыжок
     this.runningSpeed = 5;
+    this.climbingSpeed = -5;
+    this.doWeCheckCollisions = true;
   }
 
   update() {
-    this.x += this.velocity.x;
+    this.setNewCoords(this.x + this.velocity.x, this.y);
+
     this.updateHitbox();
-    this.handleHorizontalCollisions(levelCollisionsCells);
+
+    if (this.doWeCheckCollisions === true) {
+      this.handleHorizontalCollisions(levelCollisionsCells);
+    }
+
     this.applyGravity();
     this.updateHitbox();
 
+    if (this.doWeCheckCollisions === true) {
+      this.handleVerticalCollisions(levelCollisionsCells);
+    }
+
+    this.doWeCheckCollisions = true;
     //Отрисовка границ хитбокса и игрока
     // context.fillStyle = "rgba(0,0,255,0.3)";
     // context.fillRect(this.x, this.y, this.width, this.height);
@@ -42,8 +66,6 @@ export class Player extends Sprite {
     //   this.hitbox.width,
     //   this.hitbox.height,
     // );
-
-    this.handleVerticalCollisions(levelCollisionsCells);
   }
 
   checkCollisions(collisionBlock) {
@@ -88,44 +110,51 @@ export class Player extends Sprite {
     if (this.velocity.x < 0) {
       //Если идем влево
       const offset = this.hitbox.x - this.x;
-      this.x = collisionBlock.x + collisionBlock.width - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
+      const newX = collisionBlock.x + collisionBlock.width - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
+      this.setNewCoords(newX, this.y);
     }
     if (this.velocity.x > 0) {
       //Если идем вправо
       const offset = this.hitbox.x - this.x + this.hitbox.width;
-      this.x = collisionBlock.x - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
+      const newX = collisionBlock.x - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
+      this.setNewCoords(newX, this.y);
     }
   }
+
   preventVerticalCollision(collisionBlock) {
     if (this.velocity.y < 0) {
       //Если идем вверх
       this.velocity.y = 0;
       const offset = this.hitbox.y - this.y;
-      this.y = collisionBlock.y + collisionBlock.height - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
+      const newY = collisionBlock.y + collisionBlock.height - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
+      this.setNewCoords(this.x, newY);
       MovementController.keys.w.pressed = false;
     }
     if (this.velocity.y > 0) {
       //Если идем вниз
       this.velocity.y = 0;
       const offset = this.hitbox.y - this.y + this.hitbox.height;
-      this.y = collisionBlock.y - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
+      const newY = collisionBlock.y - offset - 0.01; //0.01 чтобы не точно на границе блока мы были
+      this.setNewCoords(this.x, newY);
     }
   }
 
   applyGravity() {
     this.velocity.y += this.gravity;
-    this.y += this.velocity.y;
+    this.setNewCoords(this.x, this.y + this.velocity.y);
   }
+
   handleKeysInput() {
     if (this.preventInput) return;
 
-    this.stopMoving();
+    this.stopRunning();
 
     if (MovementController.keys.a.pressed) {
       this.switchSprite("runLeft");
       this.lastDirection = "left";
       this.moveLeft();
     }
+
     if (MovementController.keys.d.pressed) {
       this.switchSprite("runRight");
       this.lastDirection = "right";
@@ -133,23 +162,51 @@ export class Player extends Sprite {
     }
 
     if (MovementController.keys.w.pressed) {
-      this.jump();
+      //обнуляем все лестницы и ставим свойство именно той по которой лезем
+      ladders.forEach((ladder) => {
+        ladder.isClimbed = this.checkCollisions(ladder);
+      });
 
-      if (this.lastDirection === "left") {
-        this.switchSprite("jumpLeft");
+      const atLeastOneIsClimbed = ladders.some((ladder) => ladder.isClimbed); // Проверка есть ли хоть одна лестница по которой лезем
+
+      //Проверим надо лезть или прыгать
+      if (atLeastOneIsClimbed) {
+        this.doWeCheckCollisions = false; //отключаем столкновения чтоб головой не биться об барьеры
+        const ladder = ladders.find((ladder) => ladder.isClimbed); //лестница по которой лезем
+        const newX = ladder.x - (this.hitbox.x - this.x) + 0.01;
+        this.setNewCoords(newX, this.y); //подогнать игрока под координаты лестницы
+        this.climb();
+        this.switchSprite("climbing");
       } else {
-        this.switchSprite("jumpRight");
+        this.jump();
+        if (this.lastDirection === "left") {
+          this.switchSprite("jumpLeft");
+        } else {
+          this.switchSprite("jumpRight");
+        }
+      }
+    }
+
+    if (MovementController.keys.s.pressed) {
+      for (let ladder of ladders) {
+        if (this.checkCollisions(ladder)) {
+          this.doWeCheckCollisions = false;
+          const newX = ladder.x - (this.hitbox.x - this.x) + 0.01;
+          this.setNewCoords(newX, this.y);
+          this.climbDown();
+          this.switchSprite("climbing");
+        }
       }
     }
 
     if (MovementController.keys.e.pressed) {
-      for (let i = 0; i < doors.length; i++) {
-        const door = doors[i];
+      for (let door of doors) {
         if (this.checkOverlapping(door)) {
-          this.velocity.x = 0;
+          this.stopRunning();
           this.preventInput = true;
           const offset = 9;
-          this.x = door.x + offset;
+          const newX = door.x + offset;
+          this.setNewCoords(newX, this.y);
           door.setAutoplayTrue();
           this.switchSprite("enterDoor");
         }
@@ -161,9 +218,10 @@ export class Player extends Sprite {
       !MovementController.keys.a.pressed &&
       !MovementController.keys.d.pressed &&
       !MovementController.keys.w.pressed &&
+      !MovementController.keys.s.pressed &&
       !MovementController.keys.e.pressed
     ) {
-      if (player.lastDirection === "left") {
+      if (this.lastDirection === "left") {
         this.switchSprite("inactionLeft");
       } else {
         this.switchSprite("inactionRight");
@@ -185,15 +243,28 @@ export class Player extends Sprite {
     this.velocity.x = this.runningSpeed;
   }
 
-  stopMoving() {
-    player.velocity.x = 0;
+  stopRunning() {
+    this.velocity.x = 0;
+  }
+
+  climb() {
+    this.velocity.y = this.climbingSpeed;
+  }
+
+  climbDown() {
+    this.velocity.y = -this.climbingSpeed;
+  }
+
+  setNewCoords(newX = this.x, newY = this.y) {
+    this.x = newX;
+    this.y = newY;
   }
 
   updateHitbox() {
     this.hitbox = {
       x: this.x + 35,
       y: this.y + 30,
-      width: 38,
+      width: 40,
       height: 70,
     };
   }

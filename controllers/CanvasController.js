@@ -25,6 +25,10 @@ export class CanvasController {
         door.draw();
       });
 
+      // ladders.forEach((ladder) => {
+      //   ladder.draw();
+      // });
+
       player.draw();
       player.update();
       player.handleKeysInput();

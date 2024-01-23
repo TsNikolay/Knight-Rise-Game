@@ -21,7 +21,7 @@ export class MovementController {
           this.keys.d.pressed = true;
           break;
         case "KeyS":
-          //вниз
+          this.keys.s.pressed = true;
 
           break;
         case "KeyE":
@@ -44,6 +44,9 @@ export class MovementController {
           break;
         case "KeyW":
           this.keys.w.pressed = false;
+          break;
+        case "KeyS":
+          this.keys.s.pressed = false;
           break;
         case "KeyE":
           this.keys.e.pressed = false;

@@ -47,4 +47,10 @@ export const animationsData = {
       levels[level].init();
     },
   },
+  climbing: {
+    frameRate: 4,
+    framesSpeed: 15,
+    loop: true,
+    imageSrc: "./data/images/player_sprites/Player_Climbing.png",
+  },
 };

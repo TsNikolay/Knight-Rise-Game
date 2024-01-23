@@ -5,6 +5,8 @@ export class Sprite {
     imgSrc,
     x,
     y,
+    width,
+    height,
     animations,
     frameRate = 1,
     framesSpeed,
@@ -13,15 +15,26 @@ export class Sprite {
   }) {
     this.x = x;
     this.y = y;
-
-    this.image = new Image();
-    this.image.onload = () => {
-      this.isLoaded = true;
-      this.width = this.image.width / this.frameRate;
-      this.height = this.image.height;
-    };
-    this.image.src = imgSrc;
     this.isLoaded = false;
+
+    if (imgSrc) {
+      this.image = new Image();
+      this.image.onload = () => {
+        this.isLoaded = true;
+        this.width = this.image.width / this.frameRate;
+        this.height = this.image.height;
+      };
+      this.image.src = imgSrc;
+    } else if (width && height) {
+      this.isLoaded = true;
+      this.width = width;
+      this.height = height;
+    } else {
+      this.isLoaded = true;
+      this.width = 100;
+      this.height = 100;
+    }
+
     this.frameRate = frameRate;
     this.currentFrame = 0;
     this.framesPast = 0;
@@ -43,18 +56,28 @@ export class Sprite {
 
   draw() {
     if (!this.isLoaded) return;
-    context.drawImage(
-      this.image,
-      this.width * this.currentFrame,
-      0,
-      this.width,
-      this.height,
-      this.x,
-      this.y,
-      this.width,
-      this.height,
-    );
-    this.updateFrames();
+
+    if (this.image) {
+      context.drawImage(
+        this.image,
+        this.width * this.currentFrame,
+        0,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height,
+      );
+      this.updateFrames();
+    } else {
+      this.drawShape();
+    }
+  }
+
+  drawShape() {
+    context.fillStyle = "rgba(0,255,0,0.3)";
+    context.fillRect(this.x, this.y, this.width, this.height);
   }
 
   updateFrames() {

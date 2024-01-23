@@ -6,6 +6,7 @@ import { player } from "../main.js";
 export let levelCollisionsCells;
 export let levelBackground;
 export let doors;
+export let ladders;
 export let level = 1;
 export const levelIncrease = () => {
   if (level === Object.keys(levels).length) {
@@ -44,6 +45,8 @@ export let levels = {
           autoplay: false,
         }),
       ];
+
+      ladders = [];
     },
   },
   2: {
@@ -71,6 +74,21 @@ export let levels = {
           framesSpeed: 14,
           loop: false,
           autoplay: false,
+        }),
+      ];
+
+      ladders = [
+        new Sprite({
+          x: 120,
+          y: 160,
+          width: 40,
+          height: 280,
+        }),
+        new Sprite({
+          x: 760,
+          y: 160,
+          width: 40,
+          height: 280,
         }),
       ];
     },
