@@ -25,7 +25,7 @@ export class CanvasController {
       levelBackground.draw();
 
       // this.drawCollisions();
-      // this.drawDoors();
+      this.drawDoors();
       // this.drawLaddersCollisions();
 
       if (boss) {
