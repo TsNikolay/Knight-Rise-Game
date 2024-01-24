@@ -1,31 +1,12 @@
 import { MovementController } from "../controllers/MovementController.js";
 import { Sprite } from "./Sprite.js";
 import { doors, ladders, levelCollisionsCells } from "../data/levelsData.js";
+import { context } from "../main.js";
 
 export class Player extends Sprite {
-  constructor({
-    imgSrc,
-    x,
-    y,
-    width,
-    height,
-    animations,
-    frameRate,
-    framesSpeed,
-    loop,
-    autoplay,
-  }) {
+  constructor(playerOptions) {
     super({
-      imgSrc,
-      x,
-      y,
-      width,
-      height,
-      animations,
-      frameRate,
-      framesSpeed,
-      loop,
-      autoplay,
+      ...playerOptions,
     });
 
     this.velocity = {
@@ -54,18 +35,8 @@ export class Player extends Sprite {
     if (this.doWeCheckCollisions === true) {
       this.handleVerticalCollisions(levelCollisionsCells);
     }
-
+    // this.drawHitboxAndBorders();
     this.doWeCheckCollisions = true;
-    //Отрисовка границ хитбокса и игрока
-    // context.fillStyle = "rgba(0,0,255,0.3)";
-    // context.fillRect(this.x, this.y, this.width, this.height);
-    // context.fillStyle = "rgba(0,255,0,0.3)";
-    // context.fillRect(
-    //   this.hitbox.x,
-    //   this.hitbox.y,
-    //   this.hitbox.width,
-    //   this.hitbox.height,
-    // );
   }
 
   checkCollisions(collisionBlock) {
@@ -278,5 +249,17 @@ export class Player extends Sprite {
     this.framesSpeed = this.animations[name].framesSpeed;
     this.loop = this.animations[name].loop;
     this.currentAnimation = this.animations[name];
+  }
+
+  drawHitboxAndBorders() {
+    context.fillStyle = "rgba(0,0,255,0.3)";
+    context.fillRect(this.x, this.y, this.width, this.height);
+    context.fillStyle = "rgba(0,255,0,0.3)";
+    context.fillRect(
+      this.hitbox.x,
+      this.hitbox.y,
+      this.hitbox.width,
+      this.hitbox.height,
+    );
   }
 }

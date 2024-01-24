@@ -2,12 +2,15 @@ import { Sprite } from "../entities/Sprite.js";
 import { createCollisionsArray } from "../utils/CollisionsUtils.js";
 import { collisionsLevel0, collisionsLevel1 } from "./collisionsLayout.js";
 import { player } from "../main.js";
+import { Boss } from "../entities/Boss.js";
 
 export let levelCollisionsCells;
 export let levelBackground;
 export let doors;
 export let ladders;
+export let boss;
 export let level = 1;
+
 export const levelIncrease = () => {
   if (level === Object.keys(levels).length) {
     level = 1;
@@ -47,6 +50,7 @@ export let levels = {
       ];
 
       ladders = [];
+      boss = null;
     },
   },
   2: {
@@ -91,6 +95,16 @@ export let levels = {
           height: 280,
         }),
       ];
+
+      boss = new Boss({
+        imgSrc: "./data/images/goblin_sprites/Goblin_Inaction_Right.png",
+        x: 650,
+        y: 60,
+        frameRate: 4,
+        framesSpeed: 14,
+        loop: true,
+        autoplay: true,
+      });
     },
   },
 };

@@ -1,6 +1,12 @@
 import { canvas, context, player } from "../main.js";
 
-import { doors, levelBackground } from "../data/levelsData.js";
+import {
+  boss,
+  doors,
+  ladders,
+  levelBackground,
+  levelCollisionsCells,
+} from "../data/levelsData.js";
 export class CanvasController {
   constructor() {}
 
@@ -17,17 +23,15 @@ export class CanvasController {
       // Код анимации
       this.clear();
       levelBackground.draw();
-      // levelCollisionsCells.forEach((collisionCell) => {
-      //   collisionCell.draw();
-      // });
 
-      doors.forEach((door) => {
-        door.draw();
-      });
+      // this.drawCollisions();
+      // this.drawDoors();
+      // this.drawLaddersCollisions();
 
-      // ladders.forEach((ladder) => {
-      //   ladder.draw();
-      // });
+      if (boss) {
+        boss.draw();
+        boss.update();
+      }
 
       player.draw();
       player.update();
@@ -42,4 +46,22 @@ export class CanvasController {
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
   };
+
+  static drawCollisions() {
+    levelCollisionsCells.forEach((collisionCell) => {
+      collisionCell.draw();
+    });
+  }
+
+  static drawDoors() {
+    doors.forEach((door) => {
+      door.draw();
+    });
+  }
+
+  static drawLaddersCollisions() {
+    ladders.forEach((ladder) => {
+      ladder.draw();
+    });
+  }
 }
