@@ -3,6 +3,7 @@ import { createCollisionsArray } from "../utils/CollisionsUtils.js";
 import { collisionsLevel0, collisionsLevel1 } from "./collisionsLayout.js";
 import { player } from "../main.js";
 import { Boss } from "../entities/Boss.js";
+import { animationsData } from "./animationsData.js";
 
 export let levelCollisionsCells;
 export let levelBackground;
@@ -22,7 +23,7 @@ export const levelIncrease = () => {
 export let levels = {
   1: {
     init: () => {
-      player.switchSprite("inactionRight");
+      player.switchSprite("player", "inactionRight");
       player.preventInput = false;
       player.x = 100;
       player.y = 280;
@@ -55,7 +56,7 @@ export let levels = {
   },
   2: {
     init: () => {
-      player.switchSprite("inactionRight");
+      player.switchSprite("player", "inactionRight");
       player.preventInput = false;
       player.x = 100;
       player.y = 120;
@@ -97,13 +98,14 @@ export let levels = {
       ];
 
       boss = new Boss({
-        imgSrc: "./data/images/goblin_sprites/Goblin_Inaction_Right.png",
-        x: 650,
-        y: 60,
+        imgSrc: "./data/images/goblin_sprites/Goblin_Inaction_Left.png",
+        x: 800,
+        y: 80,
         frameRate: 4,
         framesSpeed: 14,
         loop: true,
         autoplay: true,
+        animations: animationsData,
       });
     },
   },

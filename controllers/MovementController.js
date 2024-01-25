@@ -27,8 +27,6 @@ export class MovementController {
         case "KeyE":
           this.keys.e.pressed = true;
           break;
-        default:
-          console.log(event.key);
       }
     });
   }

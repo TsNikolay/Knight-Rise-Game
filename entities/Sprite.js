@@ -42,10 +42,12 @@ export class Sprite {
     this.animations = animations;
 
     if (this.animations) {
-      for (let key in this.animations) {
-        const image = new Image();
-        image.src = this.animations[key].imageSrc;
-        this.animations[key].image = image;
+      for (let character in this.animations) {
+        for (let animation in this.animations[character]) {
+          const image = new Image();
+          image.src = this.animations[character][animation].imageSrc;
+          this.animations[character][animation].image = image;
+        }
       }
     }
 

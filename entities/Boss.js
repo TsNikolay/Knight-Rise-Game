@@ -5,11 +5,31 @@ export class Boss extends Player {
     super({
       ...bossOptions,
     });
+    this.currentPosiition = 0;
   }
 
   update() {
     super.update();
-    this.jump();
+
+    if (this.currentPosiition === 0) {
+      this.moveToFirstCheckPoint();
+    }
+  }
+
+  moveToFirstCheckPoint() {
+    this.stopRunning();
+    if (this.x > 90) {
+      this.moveLeft();
+    } else if (this.y > 80) {
+      this.doWeCheckCollisions = false;
+      this.climb();
+    } else {
+      this.switchSprite("goblin", "inactionRight");
+
+      this.velocity.y = 0;
+      this.currentPosiition = 1;
+      this.doWeCheckCollisions = true;
+    }
   }
 
   updateHitbox() {

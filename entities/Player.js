@@ -121,13 +121,13 @@ export class Player extends Sprite {
     this.stopRunning();
 
     if (MovementController.keys.a.pressed) {
-      this.switchSprite("runLeft");
+      this.switchSprite("player", "runLeft");
       this.lastDirection = "left";
       this.moveLeft();
     }
 
     if (MovementController.keys.d.pressed) {
-      this.switchSprite("runRight");
+      this.switchSprite("player", "runRight");
       this.lastDirection = "right";
       this.moveRight();
     }
@@ -147,13 +147,13 @@ export class Player extends Sprite {
         const newX = ladder.x - (this.hitbox.x - this.x) + 0.01;
         this.setNewCoords(newX, this.y); //подогнать игрока под координаты лестницы
         this.climb();
-        this.switchSprite("climbing");
+        this.switchSprite("player", "climbing");
       } else {
         this.jump();
         if (this.lastDirection === "left") {
-          this.switchSprite("jumpLeft");
+          this.switchSprite("player", "jumpLeft");
         } else {
-          this.switchSprite("jumpRight");
+          this.switchSprite("player", "jumpRight");
         }
       }
     }
@@ -165,7 +165,7 @@ export class Player extends Sprite {
           const newX = ladder.x - (this.hitbox.x - this.x) + 0.01;
           this.setNewCoords(newX, this.y);
           this.climbDown();
-          this.switchSprite("climbing");
+          this.switchSprite("player", "climbing");
         }
       }
     }
@@ -179,7 +179,7 @@ export class Player extends Sprite {
           const newX = door.x + offset;
           this.setNewCoords(newX, this.y);
           door.setAutoplayTrue();
-          this.switchSprite("enterDoor");
+          this.switchSprite("player", "enterDoor");
         }
       }
     }
@@ -193,9 +193,9 @@ export class Player extends Sprite {
       !MovementController.keys.e.pressed
     ) {
       if (this.lastDirection === "left") {
-        this.switchSprite("inactionLeft");
+        this.switchSprite("player", "inactionLeft");
       } else {
-        this.switchSprite("inactionRight");
+        this.switchSprite("player", "inactionRight");
       }
     }
   }
@@ -240,15 +240,15 @@ export class Player extends Sprite {
     };
   }
 
-  switchSprite(name) {
-    if (this.image === this.animations[name].image) return;
+  switchSprite(character, animation) {
+    if (this.image === this.animations[character][animation].image) return;
 
     this.currentFrame = 0;
-    this.image = this.animations[name].image;
-    this.frameRate = this.animations[name].frameRate;
-    this.framesSpeed = this.animations[name].framesSpeed;
-    this.loop = this.animations[name].loop;
-    this.currentAnimation = this.animations[name];
+    this.image = this.animations[character][animation].image;
+    this.frameRate = this.animations[character][animation].frameRate;
+    this.framesSpeed = this.animations[character][animation].framesSpeed;
+    this.loop = this.animations[character][animation].loop;
+    this.currentAnimation = this.animations[character][animation];
   }
 
   drawHitboxAndBorders() {
