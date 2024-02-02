@@ -97,16 +97,19 @@ export let levels = {
         }),
       ];
 
-      boss = new Boss({
-        imgSrc: "./data/images/goblin_sprites/Goblin_Inaction_Left.png",
-        x: 800,
-        y: 80,
-        frameRate: 4,
-        framesSpeed: 14,
-        loop: true,
-        autoplay: true,
-        animations: animationsData,
-      });
+      boss = new Boss(
+        {
+          imgSrc: "./data/images/goblin_sprites/Goblin_Inaction_Left.png",
+          x: 800,
+          y: 80,
+          frameRate: 4,
+          framesSpeed: 14,
+          loop: true,
+          autoplay: true,
+          animations: animationsData,
+        },
+        "goblin",
+      );
     },
   },
 };
