@@ -15,6 +15,7 @@ export const player = new Player({
   frameRate: 4,
   framesSpeed: 15,
   loop: true,
+  health: 100,
 });
 canvas.width = 40 * 24; //1024
 canvas.height = 40 * 14; //576

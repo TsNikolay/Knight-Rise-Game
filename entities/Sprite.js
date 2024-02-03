@@ -108,4 +108,18 @@ export class Sprite {
   setAutoplayTrue() {
     this.autoplay = true;
   }
+
+  moveLeft(distance) {
+    this.x += -distance;
+  }
+  moveRight(distance) {
+    this.x += -distance;
+  }
+
+  moveUp(distance) {
+    this.y += -distance;
+  }
+  moveDown(distance) {
+    this.y += -distance;
+  }
 }

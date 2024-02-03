@@ -4,9 +4,9 @@ import { doors, ladders, levelCollisionsCells } from "../data/levelsData.js";
 import { context } from "../main.js";
 
 export class Player extends Sprite {
-  constructor(spriteRelatedOptions) {
+  constructor(options) {
     super({
-      ...spriteRelatedOptions,
+      ...options,
     });
 
     this.velocity = {
@@ -18,6 +18,7 @@ export class Player extends Sprite {
     this.runningSpeed = 5;
     this.climbingSpeed = -5;
     this.doWeCheckCollisions = true;
+    this.health = options.health;
   }
 
   update() {
