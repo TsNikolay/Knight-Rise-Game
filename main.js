@@ -3,6 +3,7 @@ import { MovementController } from "./controllers/MovementController.js";
 import { animationsData } from "./data/animationsData.js";
 import { level, levels } from "./data/levelsData.js";
 import { Player } from "./entities/Player.js";
+import { InterfaceController } from "./controllers/InterfaceConrtoller.js";
 
 export const canvas = document.querySelector("canvas");
 export const context = canvas.getContext("2d");
@@ -25,3 +26,4 @@ levels[level].init();
 MovementController.listenKeyDown();
 MovementController.listenKeyUp();
 CanvasController.animate();
+InterfaceController.createInterface();

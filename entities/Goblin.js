@@ -84,8 +84,7 @@ export class Goblin extends Boss {
       this.didPoisonReachPlayer()
     ) {
       if (this.didPoisonReachPlayer()) {
-        player.health -= 10;
-        console.log(player.health);
+        this.doDamage(10);
       }
 
       this.poison = null;

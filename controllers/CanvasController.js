@@ -7,6 +7,8 @@ import {
   levelBackground,
   levelCollisionsCells,
 } from "../data/levelsData.js";
+import { InterfaceController } from "./InterfaceConrtoller.js";
+
 export class CanvasController {
   constructor() {}
 
@@ -23,6 +25,7 @@ export class CanvasController {
       // Код анимации
       this.clear();
       levelBackground.draw();
+      InterfaceController.draw();
 
       // this.drawCollisions();
       this.drawDoors();

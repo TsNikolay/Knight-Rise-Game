@@ -54,6 +54,32 @@ export const animationsData = {
       loop: true,
       imageSrc: "./data/images/player_sprites/Player_Climbing.png",
     },
+    damagedRight: {
+      frameRate: 4,
+      framesSpeed: 10,
+      loop: true,
+      imageSrc: "./data/images/player_sprites/Player_Damaged_Right.png",
+    },
+    damagedLeft: {
+      frameRate: 4,
+      framesSpeed: 10,
+      loop: true,
+      imageSrc: "./data/images/player_sprites/Player_Damaged_Left.png",
+    },
+
+    deathRight: {
+      frameRate: 8,
+      framesSpeed: 15,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Death_Right.png",
+    },
+
+    deathLeft: {
+      frameRate: 8,
+      framesSpeed: 15,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Death_Left.png",
+    },
   },
   goblin: {
     inactionRight: {

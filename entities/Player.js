@@ -19,6 +19,7 @@ export class Player extends Sprite {
     this.climbingSpeed = -5;
     this.doWeCheckCollisions = true;
     this.health = options.health;
+    this.isAlive = true;
   }
 
   update() {
@@ -38,6 +39,10 @@ export class Player extends Sprite {
     }
     // this.drawHitboxAndBorders();
     this.doWeCheckCollisions = true;
+
+    if (this.health <= 0) {
+      this.death();
+    }
   }
 
   checkCollisions(collisionBlock) {
@@ -194,9 +199,23 @@ export class Player extends Sprite {
       !MovementController.keys.e.pressed
     ) {
       if (this.lastDirection === "left") {
-        this.switchSprite("player", "inactionLeft");
+        if (!this.isAlive) {
+          this.preventInput = true;
+          this.switchSprite("player", "deathLeft");
+        } else if (this.takesDamage) {
+          this.switchSprite("player", "damagedLeft");
+        } else {
+          this.switchSprite("player", "inactionLeft");
+        }
       } else {
-        this.switchSprite("player", "inactionRight");
+        if (!this.isAlive) {
+          this.preventInput = true;
+          this.switchSprite("player", "deathRight");
+        } else if (this.takesDamage) {
+          this.switchSprite("player", "damagedRight");
+        } else {
+          this.switchSprite("player", "inactionRight");
+        }
       }
     }
   }
@@ -252,7 +271,7 @@ export class Player extends Sprite {
     this.currentAnimation = this.animations[character][animation];
   }
 
-  drawHitboxAndBorders() {
+  HitboxAndBorders() {
     context.fillStyle = "rgba(0,0,255,0.3)";
     context.fillRect(this.x, this.y, this.width, this.height);
     context.fillStyle = "rgba(0,255,0,0.3)";
@@ -262,5 +281,9 @@ export class Player extends Sprite {
       this.hitbox.width,
       this.hitbox.height,
     );
+  }
+
+  death() {
+    this.isAlive = false;
   }
 }
