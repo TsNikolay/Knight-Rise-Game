@@ -1,6 +1,11 @@
-import { MovementController } from "../controllers/MovementController.js";
+import { KeysController } from "../controllers/KeysController.js";
 import { Sprite } from "./Sprite.js";
-import { doors, ladders, levelCollisionsCells } from "../data/levelsData.js";
+import {
+  boss,
+  doors,
+  ladders,
+  levelCollisionsCells,
+} from "../data/levelsData.js";
 import { context } from "../main.js";
 
 export class Player extends Sprite {
@@ -105,7 +110,7 @@ export class Player extends Sprite {
       const offset = this.hitbox.y - this.y;
       const newY = collisionBlock.y + collisionBlock.height - offset + 0.01; //0.01 чтобы не точно на границе блока мы были
       this.setNewCoords(this.x, newY);
-      MovementController.keys.w.pressed = false;
+      KeysController.keys.w.pressed = false;
     }
     if (this.velocity.y > 0) {
       //Если идем вниз
@@ -121,24 +126,24 @@ export class Player extends Sprite {
     this.setNewCoords(this.x, this.y + this.velocity.y);
   }
 
-  handleKeysInput() {
+  handleMovementKeysInput() {
     if (this.preventInput) return;
 
     this.stopRunning();
 
-    if (MovementController.keys.a.pressed) {
+    if (KeysController.keys.a.pressed) {
       this.switchSprite("player", "runLeft");
       this.lastDirection = "left";
       this.moveLeft();
     }
 
-    if (MovementController.keys.d.pressed) {
+    if (KeysController.keys.d.pressed) {
       this.switchSprite("player", "runRight");
       this.lastDirection = "right";
       this.moveRight();
     }
 
-    if (MovementController.keys.w.pressed) {
+    if (KeysController.keys.w.pressed) {
       //обнуляем все лестницы и ставим свойство именно той по которой лезем
       ladders.forEach((ladder) => {
         ladder.isClimbed = this.checkCollisions(ladder);
@@ -164,7 +169,7 @@ export class Player extends Sprite {
       }
     }
 
-    if (MovementController.keys.s.pressed) {
+    if (KeysController.keys.s.pressed) {
       for (let ladder of ladders) {
         if (this.checkCollisions(ladder)) {
           this.doWeCheckCollisions = false;
@@ -176,7 +181,7 @@ export class Player extends Sprite {
       }
     }
 
-    if (MovementController.keys.e.pressed) {
+    if (KeysController.keys.e.pressed) {
       for (let door of doors) {
         if (this.checkOverlapping(door)) {
           this.stopRunning();
@@ -192,11 +197,11 @@ export class Player extends Sprite {
 
     if (
       //Если бы сделал else if и просто else, персонаж бы не мог одновременно прыгать и бегать (с return тоже самое)
-      !MovementController.keys.a.pressed &&
-      !MovementController.keys.d.pressed &&
-      !MovementController.keys.w.pressed &&
-      !MovementController.keys.s.pressed &&
-      !MovementController.keys.e.pressed
+      !KeysController.keys.a.pressed &&
+      !KeysController.keys.d.pressed &&
+      !KeysController.keys.w.pressed &&
+      !KeysController.keys.s.pressed &&
+      !KeysController.keys.e.pressed
     ) {
       if (this.lastDirection === "left") {
         if (!this.isAlive) {
@@ -285,5 +290,15 @@ export class Player extends Sprite {
 
   death() {
     this.isAlive = false;
+    boss.isAttacking = false;
+  }
+
+  resetProperties() {
+    this.health = 100;
+    this.isAlive = true;
+    this.x = 100;
+    this.y = 100;
+    this.switchSprite("player", "inactionRight");
+    this.lastDirection = "right";
   }
 }

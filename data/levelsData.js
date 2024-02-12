@@ -19,6 +19,9 @@ export const levelIncrease = () => {
     level++;
   }
 };
+export const levelsReset = () => {
+  level = 1;
+};
 
 export let levels = {
   1: {

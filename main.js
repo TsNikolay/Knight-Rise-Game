@@ -1,5 +1,5 @@
 import { CanvasController } from "./controllers/CanvasController.js";
-import { MovementController } from "./controllers/MovementController.js";
+import { KeysController } from "./controllers/KeysController.js";
 import { animationsData } from "./data/animationsData.js";
 import { level, levels } from "./data/levelsData.js";
 import { Player } from "./entities/Player.js";
@@ -18,12 +18,12 @@ export const player = new Player({
   loop: true,
   health: 100,
 });
-canvas.width = 40 * 24; //1024
-canvas.height = 40 * 14; //576
+canvas.width = 40 * 24; //960
+canvas.height = 40 * 14; //560
 
 levels[level].init();
 
-MovementController.listenKeyDown();
-MovementController.listenKeyUp();
+KeysController.listenKeyDown();
+KeysController.listenKeyUp();
 CanvasController.animate();
 InterfaceController.createInterface();

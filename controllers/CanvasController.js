@@ -25,7 +25,6 @@ export class CanvasController {
       // Код анимации
       this.clear();
       levelBackground.draw();
-      InterfaceController.draw();
 
       // this.drawCollisions();
       this.drawDoors();
@@ -36,9 +35,12 @@ export class CanvasController {
         boss.update();
       }
 
+      InterfaceController.draw();
+
       player.draw();
       player.update();
-      player.handleKeysInput();
+      player.handleMovementKeysInput();
+      InterfaceController.handleInterfaceKeysInput();
     }
 
     // Запускаем следующий кадр

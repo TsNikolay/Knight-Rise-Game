@@ -1,4 +1,4 @@
-export class MovementController {
+export class KeysController {
   static keys = {
     w: { pressed: false },
     a: { pressed: false },
