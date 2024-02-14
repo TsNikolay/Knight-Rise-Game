@@ -5,6 +5,7 @@ export class KeysController {
     s: { pressed: false },
     d: { pressed: false },
     e: { pressed: false },
+    leftMouseButton: { pressed: false },
   };
   constructor() {}
 
@@ -50,6 +51,12 @@ export class KeysController {
           this.keys.e.pressed = false;
           break;
       }
+    });
+  }
+
+  static listenMouseClick() {
+    window.addEventListener("mousedown", () => {
+      this.keys.leftMouseButton.pressed = true;
     });
   }
 }

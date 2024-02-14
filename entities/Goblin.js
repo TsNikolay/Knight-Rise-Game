@@ -1,6 +1,7 @@
 import { Boss } from "./Boss.js";
 import { Sprite } from "./Sprite.js";
 import { player } from "../main.js";
+import { checkCollisions } from "../utils/CollisionsUtils.js";
 
 export class Goblin extends Boss {
   constructor(options) {
@@ -107,20 +108,10 @@ export class Goblin extends Boss {
   }
 
   didPoisonReachPlayerStartPos(startPos) {
-    return (
-      this.poison.x + this.poison.width > startPos.x &&
-      this.poison.x < startPos.x + startPos.width &&
-      this.poison.y + this.poison.height > startPos.y &&
-      this.poison.y < startPos.y + startPos.height
-    );
+    return checkCollisions(this.poison, startPos);
   }
 
   didPoisonReachPlayer() {
-    return (
-      this.poison.x + this.poison.width > player.hitbox.x &&
-      this.poison.x < player.hitbox.x + player.hitbox.width &&
-      this.poison.y + this.poison.height > player.hitbox.y &&
-      this.poison.y < player.hitbox.y + player.hitbox.height
-    );
+    return checkCollisions(this.poison, player.hitbox);
   }
 }

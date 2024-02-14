@@ -25,5 +25,7 @@ levels[level].init();
 
 KeysController.listenKeyDown();
 KeysController.listenKeyUp();
+KeysController.listenMouseClick();
+
 CanvasController.animate();
 InterfaceController.createInterface();

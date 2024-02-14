@@ -7,6 +7,7 @@ import {
   levelCollisionsCells,
 } from "../data/levelsData.js";
 import { context } from "../main.js";
+import { checkCollisions, checkOverlapping } from "../utils/CollisionsUtils.js";
 
 export class Player extends Sprite {
   constructor(options) {
@@ -25,6 +26,7 @@ export class Player extends Sprite {
     this.doWeCheckCollisions = true;
     this.health = options.health;
     this.isAlive = true;
+    this.swordDamage = 5;
   }
 
   update() {
@@ -50,29 +52,10 @@ export class Player extends Sprite {
     }
   }
 
-  checkCollisions(collisionBlock) {
-    return (
-      this.hitbox.x <= collisionBlock.x + collisionBlock.width &&
-      this.hitbox.x + this.hitbox.width >= collisionBlock.x &&
-      this.hitbox.y + this.hitbox.height >= collisionBlock.y &&
-      this.hitbox.y <= collisionBlock.y + collisionBlock.height
-    );
-  }
-
-  checkOverlapping(objectToOverlap) {
-    return (
-      this.hitbox.x + this.hitbox.width <=
-        objectToOverlap.x + objectToOverlap.width &&
-      this.hitbox.x >= objectToOverlap.x &&
-      this.hitbox.y + this.hitbox.height >= objectToOverlap.y &&
-      this.hitbox.y <= objectToOverlap.y + objectToOverlap.height
-    );
-  }
-
   handleHorizontalCollisions = (collisionsCells) => {
     for (let i = 0; i < collisionsCells.length; i++) {
       const collisionBlock = collisionsCells[i];
-      if (this.checkCollisions(collisionBlock)) {
+      if (checkCollisions(this.hitbox, collisionBlock)) {
         this.preventHorizontalCollision(collisionBlock);
         break;
       }
@@ -82,7 +65,7 @@ export class Player extends Sprite {
   handleVerticalCollisions = (collisionsCells) => {
     for (let i = 0; i < collisionsCells.length; i++) {
       const collisionBlock = collisionsCells[i];
-      if (this.checkCollisions(collisionBlock)) {
+      if (checkCollisions(this.hitbox, collisionBlock)) {
         this.preventVerticalCollision(collisionBlock);
       }
     }
@@ -129,6 +112,23 @@ export class Player extends Sprite {
   handleMovementKeysInput() {
     if (this.preventInput) return;
 
+    if (KeysController.keys.leftMouseButton.pressed) {
+      if (this.lastDirection === "left") {
+        this.switchSprite("player", "attackLeft");
+      } else {
+        this.switchSprite("player", "attackRight");
+      }
+
+      if (this.currentFrame === this.frameRate - 1) {
+        KeysController.keys.leftMouseButton.pressed = false;
+      }
+
+      this.createAndDrawSword();
+      this.makeAttack();
+
+      return;
+    }
+
     this.stopRunning();
 
     if (KeysController.keys.a.pressed) {
@@ -146,7 +146,7 @@ export class Player extends Sprite {
     if (KeysController.keys.w.pressed) {
       //обнуляем все лестницы и ставим свойство именно той по которой лезем
       ladders.forEach((ladder) => {
-        ladder.isClimbed = this.checkCollisions(ladder);
+        ladder.isClimbed = checkCollisions(this.hitbox, ladder);
       });
 
       const atLeastOneIsClimbed = ladders.some((ladder) => ladder.isClimbed); // Проверка есть ли хоть одна лестница по которой лезем
@@ -171,7 +171,7 @@ export class Player extends Sprite {
 
     if (KeysController.keys.s.pressed) {
       for (let ladder of ladders) {
-        if (this.checkCollisions(ladder)) {
+        if (checkCollisions(this.hitbox, ladder)) {
           this.doWeCheckCollisions = false;
           const newX = ladder.x - (this.hitbox.x - this.x) + 0.01;
           this.setNewCoords(newX, this.y);
@@ -183,7 +183,7 @@ export class Player extends Sprite {
 
     if (KeysController.keys.e.pressed) {
       for (let door of doors) {
-        if (this.checkOverlapping(door)) {
+        if (checkOverlapping(this.hitbox, door)) {
           this.stopRunning();
           this.preventInput = true;
           const offset = 9;
@@ -201,7 +201,8 @@ export class Player extends Sprite {
       !KeysController.keys.d.pressed &&
       !KeysController.keys.w.pressed &&
       !KeysController.keys.s.pressed &&
-      !KeysController.keys.e.pressed
+      !KeysController.keys.e.pressed &&
+      !KeysController.keys.leftMouseButton.pressed
     ) {
       if (this.lastDirection === "left") {
         if (!this.isAlive) {
@@ -265,6 +266,21 @@ export class Player extends Sprite {
     };
   }
 
+  updateSwordHitbox() {
+    this.updateHitbox();
+    this.swordHitbox = {
+      y: this.hitbox.y - 20,
+      width: 25,
+      height: this.hitbox.height + 20,
+    };
+
+    if (this.lastDirection === "left") {
+      this.swordHitbox.x = this.hitbox.x - this.hitbox.width;
+    } else {
+      this.swordHitbox.x = this.hitbox.x + this.hitbox.width;
+    }
+  }
+
   switchSprite(character, animation) {
     if (this.image === this.animations[character][animation].image) return;
 
@@ -300,5 +316,36 @@ export class Player extends Sprite {
     this.y = 100;
     this.switchSprite("player", "inactionRight");
     this.lastDirection = "right";
+  }
+
+  createAndDrawSword() {
+    this.updateSwordHitbox();
+    if (!this.sword) {
+      this.sword = new Sprite({
+        x: this.swordHitbox.x,
+        y: this.swordHitbox.y,
+        width: this.swordHitbox.width,
+        height: this.swordHitbox.height,
+      });
+    }
+    this.sword.drawShape();
+    this.sword = null;
+  }
+
+  makeAttack() {
+    if (this.didSwordReachBoss() && this.isAttacking) {
+      this.doDamage(this.swordDamage);
+      console.log(boss.health);
+    }
+  }
+  didSwordReachBoss() {
+    if (!boss) {
+      return false;
+    }
+    return checkCollisions(this.swordHitbox, boss);
+  }
+
+  doDamage(damage) {
+    boss.health -= damage;
   }
 }

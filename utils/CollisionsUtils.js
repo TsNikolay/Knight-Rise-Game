@@ -25,3 +25,21 @@ Array.prototype.createObjectsFromMatrix = function () {
 export const createCollisionsArray = (array) => {
   return array.convertToMatrix24by14().createObjectsFromMatrix();
 };
+
+export function checkCollisions(object, collisionBlock) {
+  return (
+    object.x <= collisionBlock.x + collisionBlock.width &&
+    object.x + object.width >= collisionBlock.x &&
+    object.y + object.height >= collisionBlock.y &&
+    object.y <= collisionBlock.y + collisionBlock.height
+  );
+}
+
+export function checkOverlapping(object, objectToOverlap) {
+  return (
+    object.x + object.width <= objectToOverlap.x + objectToOverlap.width &&
+    object.x >= objectToOverlap.x &&
+    object.y + object.height >= objectToOverlap.y &&
+    object.y <= objectToOverlap.y + objectToOverlap.height
+  );
+}

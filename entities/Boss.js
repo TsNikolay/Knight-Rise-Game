@@ -10,6 +10,7 @@ export class Boss extends Player {
     this.currentCheckPoint = 0;
     this.attacksMade = 0;
     this.isAttacking = false;
+    this.health = options.health;
   }
 
   update() {

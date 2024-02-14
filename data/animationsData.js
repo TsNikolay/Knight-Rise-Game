@@ -80,6 +80,20 @@ export const animationsData = {
       loop: false,
       imageSrc: "./data/images/player_sprites/Player_Death_Left.png",
     },
+
+    attackRight: {
+      frameRate: 4,
+      framesSpeed: 7,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Attack_Right.png",
+    },
+
+    attackLeft: {
+      frameRate: 4,
+      framesSpeed: 7,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Attack_Left.png",
+    },
   },
   goblin: {
     inactionRight: {
