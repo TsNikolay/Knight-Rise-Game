@@ -328,12 +328,12 @@ export class Player extends Sprite {
         height: this.swordHitbox.height,
       });
     }
-    this.sword.drawShape();
+    // this.sword.drawShape();
     this.sword = null;
   }
 
   makeAttack() {
-    if (this.didSwordReachBoss() && this.isAttacking) {
+    if (this.didSwordReachBoss()) {
       this.doDamage(this.swordDamage);
       console.log(boss.health);
     }
