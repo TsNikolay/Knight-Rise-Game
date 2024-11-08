@@ -183,6 +183,7 @@ export class Player extends Sprite {
 
     if (KeysController.keys.e.pressed) {
       for (let door of doors) {
+        console.log(doors)
         if (checkOverlapping(this.hitbox, door)) {
           this.stopRunning();
           this.preventInput = true;

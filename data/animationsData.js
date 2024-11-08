@@ -94,6 +94,20 @@ export const animationsData = {
       loop: false,
       imageSrc: "./data/images/player_sprites/Player_Attack_Left.png",
     },
+
+    defenseRight: {
+      frameRate: 4,
+      framesSpeed: 7,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Defense_Right.png",
+    },
+
+    defenseLeft: {
+      frameRate: 4,
+      framesSpeed: 7,
+      loop: false,
+      imageSrc: "./data/images/player_sprites/Player_Defense_Left.png",
+    },
   },
   goblin: {
     inactionRight: {
@@ -108,5 +122,11 @@ export const animationsData = {
       loop: true,
       imageSrc: "./data/images/goblin_sprites/Goblin_Inaction_Left.png",
     },
+    deathLeft: {
+      frameRate: 8,
+      framesSpeed: 15,
+      loop: false,
+      imageSrc: "./data/images/goblin_sprites/Goblin_Death_Right.png",
+    }
   },
 };

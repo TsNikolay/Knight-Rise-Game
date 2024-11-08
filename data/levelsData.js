@@ -72,18 +72,7 @@ export let levels = {
       });
 
       levelCollisionsCells = createCollisionsArray(collisionsLevel1);
-
-      doors = [
-        new Sprite({
-          imgSrc: "./data/images/doorOpening.png",
-          x: 800,
-          y: 360,
-          frameRate: 4,
-          framesSpeed: 14,
-          loop: false,
-          autoplay: false,
-        }),
-      ];
+      doors = [ ]; //Пока гоблин не убит двери нету
 
       ladders = [
         new Sprite({
@@ -109,7 +98,7 @@ export let levels = {
         loop: true,
         autoplay: true,
         animations: animationsData,
-        health: 50,
+        health: 500,
       });
     },
   },
