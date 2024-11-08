@@ -13,7 +13,7 @@ export class Goblin extends Boss {
     this.attacksMade = 0;             // Кількість атак
     this.speedOfPoisonFlying = 100;   // Швидкість польоту отрути
     this.hasDied = false;             // Прапорець смерті
-    this.poisonDamage = 50;           // Шкода від отрути
+    this.poisonDamage = 30;           // Шкода від отрути
   }
 
   // Секція: Оновлення

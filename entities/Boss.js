@@ -32,10 +32,10 @@ export class Boss extends Character {
   // Нанесення шкоди гравцеві
   doDamage(damage) {
     if (player.isInvulnerable) return; // Якщо гравець невразливий, шкода не застосовується
-
+    InterfaceController.lossOfHealth(damage);
     player.health -= damage;
     player.takesDamage = true;
-    InterfaceController.lossOfHealth();
+    
     
     setTimeout(() => {
       player.takesDamage = false;

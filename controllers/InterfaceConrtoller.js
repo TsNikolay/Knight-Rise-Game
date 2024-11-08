@@ -72,16 +72,32 @@ export class InterfaceController {
     }
   }
 
-  static lossOfHealth() {
-    const lastHeartIndex = this.hearts.length - 1;
-    for (let i = lastHeartIndex; i >= 0; i--) {
-      const heart = this.hearts[i];
-      if (heart.currentFrame !== heart.frameRate - 1) {
-        heart.currentFrame++;
-        heart.updateFrames();
-        return;
-      }
+  static lossOfHealth(lostHealth) {
+    //Если урон больше чем у игрока осталось здоровья, приравняем занчения чтоб не выйти в минусовые сердечки
+    console.log("Lost health: " + lostHealth)
+    console.log("Player health: " + player.health)
+    console.log("=========")
+    if( lostHealth > player.health) {
+      lostHealth = player.health
+    } 
+
+      //  Например нанесли 30 урона игроку
+      //  У игрока 10 пол чердечек (5 сердечек)
+      //  100 здоровья всего
+      //  Значит 1 полcердечко это 10 урона
+      //  Значит должно снести 3 пол чердечка
+      
+      const healthInOneSemiHeart = 10;
+      const amountOfLostSemiHeart = lostHealth / healthInOneSemiHeart
+
+      for(let i = 0; i < amountOfLostSemiHeart; i++){
+        const heart = this.hearts.findLast(heart => heart.currentFrame != heart.frameRate - 1); //Останнє не пусте сердце праворуч 
+        if (heart.currentFrame !== heart.frameRate - 1) {
+          heart.currentFrame++;
+          heart.updateFrames();
+        }
     }
+    
   }
 
   static fullRecovery() {
