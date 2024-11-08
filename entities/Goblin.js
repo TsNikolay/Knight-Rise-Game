@@ -9,23 +9,24 @@ export class Goblin extends Boss {
     super({
       ...options,
     });
-    
-    this.nextCheckpoint = 0;
-    this.attacksMade = 0;
-    this.isAttacking = false;
-    this.speedOfPoisonFlying = 100;
-    this.hasDied = false
+    this.nextCheckpoint = 0;          // Наступна точка патрулювання
+    this.attacksMade = 0;             // Кількість атак
+    this.speedOfPoisonFlying = 100;   // Швидкість польоту отрути
+    this.hasDied = false;             // Прапорець смерті
+    this.poisonDamage = 50;           // Шкода від отрути
   }
 
-
+  // Секція: Оновлення
+  // Оновлення стану гобліна
   update() {
-    // Проверяем, если персонаж мертв, то делаем действия один раз и завершаем обновления
+    if (!player.isAlive) return; // Якщо гравець мертвий, припиняємо оновлення
+
     if (!this.isAlive) {
-      // Анимация смерти, если она еще не началась
-      if (!this.hasDied) { // Проверка на то, выполнена ли анимация смерти
+      // Анімація смерті, якщо вона ще не почалася
+      if (!this.hasDied) { // Перевірка, чи завершилася анімація смерті
         this.switchSprite("goblin", "deathLeft");
-  
-        // Добавляем дверь только при первой проверке
+
+        // Додаємо двері лише при першій перевірці
         doors.push(new Sprite({
           imgSrc: "./data/images/doorOpening.png",
           x: 800,
@@ -35,24 +36,25 @@ export class Goblin extends Boss {
           loop: false,
           autoplay: false,
         }));
-  
-        // Устанавливаем флаг, что персонаж уже умер и анимация выполнена
+
+        // Встановлюємо прапорець смерті і завершуємо анімацію
         this.hasDied = true;
       }
-  
-      // После смерти ничего больше не выполняем
+
+      // Після смерті більше нічого не виконуємо
       return;
     }
-  
-    // Если персонаж жив, выполняем логику
+
+    // Якщо персонаж живий, виконуємо основну логіку
     super.update();
-  
+
     if (this.nextCheckpoint === 0) {
       this.moveFrom0To1Checkpoint();
     }
     if (this.nextCheckpoint === 1) {
       this.moveFrom1To0Checkpoint();
     }
+
     if (this.isAttacking) {
       this.attack1();
     }
@@ -62,7 +64,8 @@ export class Goblin extends Boss {
     }
   }
 
-  
+  // Секція: Переміщення
+  // Переміщення від контрольної точки 0 до 1
   moveFrom0To1Checkpoint() {
     this.stopRunning();
     if (this.x > 90) {
@@ -78,6 +81,7 @@ export class Goblin extends Boss {
     }
   }
 
+  // Переміщення від контрольної точки 1 до 0
   moveFrom1To0Checkpoint() {
     this.stopRunning();
     if (this.x < 250) {
@@ -92,7 +96,7 @@ export class Goblin extends Boss {
       this.moveRight();
     } else if (this.x < 800) {
       this.moveRight();
-        this.jump();
+      this.jump();
     } else {
       this.switchSprite("goblin", "inactionLeft");
       this.velocity.y = 0;
@@ -101,12 +105,15 @@ export class Goblin extends Boss {
     }
   }
 
+  // Секція: Атака
+  // Основна атака з отрутою
   attack1() {
     this.createAndDrawCharge();
     this.trackPlayerStartPosition();
     this.makeAttack(this.playerStartPosition);
   }
 
+  // Створення та відображення отрути
   createAndDrawCharge() {
     if (!this.poison) {
       this.poison = new Sprite({
@@ -122,17 +129,19 @@ export class Goblin extends Boss {
     this.poison.draw();
   }
 
+  // Відстеження стартової позиції гравця для прицілювання
   trackPlayerStartPosition() {
     if (!this.playerStartPosition) {
       this.playerStartPosition = new Sprite({
         x: player.hitbox.x,
-        y: player.hitbox.y + player.hitbox.height, //чтобы столкновение было не с верхней частью хитбокса, а с нижней
+        y: player.hitbox.y + player.hitbox.height, // Щоб зіткнення було не з верхньою частиною хитбокса, а з нижньою
         width: player.hitbox.width,
-        height: 1, // чтоб хитбокс стартовой позиции был максимально тонким
+        height: 1, // Щоб хитбокс стартової позиції був максимально тонким
       });
     }
   }
 
+  // Виконання атаки по стартовій позиції гравця
   makeAttack(playerStartPos) {
     const horizontalFlightLength = playerStartPos.x - this.x;
     const verticalFlightLength = playerStartPos.y - this.y;
@@ -144,9 +153,8 @@ export class Goblin extends Boss {
       this.didPoisonReachPlayer()
     ) {
       if (this.didPoisonReachPlayer()) {
-        this.doDamage(10);
+        this.doDamage(this.poisonDamage);
       }
-
       this.poison = null;
       this.playerStartPosition = null;
       this.attacksMade++;
@@ -159,6 +167,8 @@ export class Goblin extends Boss {
     }
   }
 
+  // Секція: Хитбокси
+  // Оновлення хитбокса гобліна
   updateHitbox() {
     this.hitbox = {
       x: this.x + 20,
@@ -168,10 +178,12 @@ export class Goblin extends Boss {
     };
   }
 
+  // Перевірка, чи досягла отрута стартової позиції гравця
   didPoisonReachPlayerStartPos(startPos) {
     return checkCollisions(this.poison, startPos);
   }
 
+  // Перевірка, чи досягла отрута гравця
   didPoisonReachPlayer() {
     return checkCollisions(this.poison, player.hitbox);
   }
