@@ -27,6 +27,8 @@ export class Player extends Sprite {
     this.health = options.health;
     this.isAlive = true;
     this.swordDamage = 5;
+    this.isInvulnerable = false //неуязвимость (для щита)
+    this.wasThereShieldAttempt = false //флажок чтоб при нажатии щита только один раз можно было попробовать защититься или нет
   }
 
   update() {
@@ -129,6 +131,18 @@ export class Player extends Sprite {
       return;
     }
 
+    if (KeysController.keys.rightMouseButton.pressed) {
+      if (this.lastDirection === "left") {
+        this.switchSprite("player", "defenseLeft");
+      } else {
+        this.switchSprite("player", "defenseRight");
+      }
+
+      this.defense();
+      this.stopRunning();
+      return;
+    }
+
     this.stopRunning();
 
     if (KeysController.keys.a.pressed) {
@@ -203,8 +217,11 @@ export class Player extends Sprite {
       !KeysController.keys.w.pressed &&
       !KeysController.keys.s.pressed &&
       !KeysController.keys.e.pressed &&
-      !KeysController.keys.leftMouseButton.pressed
+      !KeysController.keys.leftMouseButton.pressed &&
+      !KeysController.keys.rightMouseButton.pressed
     ) {
+      this.removeDefense() //После отжатия правой кнопки мыши (блока) уберём защиту
+
       if (this.lastDirection === "left") {
         if (!this.isAlive) {
           this.preventInput = true;
@@ -336,9 +353,9 @@ export class Player extends Sprite {
   makeAttack() {
     if (this.didSwordReachBoss()) {
       this.doDamage(this.swordDamage);
-      console.log(boss.health);
     }
   }
+
   didSwordReachBoss() {
     if (!boss) {
       return false;
@@ -349,4 +366,21 @@ export class Player extends Sprite {
   doDamage(damage) {
     boss.health -= damage;
   }
+
+  defense(){
+    if(this.wasThereShieldAttempt) return
+
+    const checkLuck = Math.floor(Math.random() * 2) + 1; //Если выпадет 1 то защитился, если 2 то нет
+    if(checkLuck === 1){
+      this.isInvulnerable = true
+      console.log("Защитился")
+    }
+      this.wasThereShieldAttempt = true
+  }
+
+  removeDefense(){
+      this.isInvulnerable = false
+      this.wasThereShieldAttempt = false
+  }
+    
 }

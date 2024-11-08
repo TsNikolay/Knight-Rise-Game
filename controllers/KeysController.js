@@ -6,6 +6,7 @@ export class KeysController {
     d: { pressed: false },
     e: { pressed: false },
     leftMouseButton: { pressed: false },
+    rightMouseButton: { pressed: false },
   };
   constructor() {}
 
@@ -55,8 +56,23 @@ export class KeysController {
   }
 
   static listenMouseClick() {
-    window.addEventListener("mousedown", () => {
-      this.keys.leftMouseButton.pressed = true;
+    window.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
     });
-  }
+
+    window.addEventListener("mousedown", (event) => {
+        if (event.button === 0) {
+            this.keys.leftMouseButton.pressed = true; 
+        } else if (event.button === 2) {
+            this.keys.rightMouseButton.pressed = true;
+        }
+    });
+
+    window.addEventListener("mouseup", (event) => {
+      if (event.button === 2) {
+          this.keys.rightMouseButton.pressed = false;
+      }
+  });
+}
+
 }

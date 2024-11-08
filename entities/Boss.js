@@ -30,6 +30,8 @@ export class Boss extends Player {
   }
 
   doDamage(damage) {
+    if(player.isInvulnerable) return
+    
     player.health -= damage;
     player.takesDamage = true;
     InterfaceController.lossOfHealth();
