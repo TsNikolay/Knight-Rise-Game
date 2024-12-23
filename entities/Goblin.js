@@ -9,11 +9,11 @@ export class Goblin extends Boss {
     super({
       ...options,
     });
-    this.nextCheckpoint = 0;          // Наступна точка патрулювання
-    this.attacksMade = 0;             // Кількість атак
-    this.speedOfPoisonFlying = 100;   // Швидкість польоту отрути
-    this.hasDied = false;             // Прапорець смерті
-    this.poisonDamage = 30;           // Шкода від отрути
+    this.nextCheckpoint = 0; // Наступна точка патрулювання
+    this.attacksMade = 0; // Кількість атак
+    this.speedOfPoisonFlying = 100; // Швидкість польоту отрути
+    this.hasDied = false; // Прапорець смерті
+    this.poisonDamage = 30; // Шкода від отрути
   }
 
   // Секція: Оновлення
@@ -23,19 +23,22 @@ export class Goblin extends Boss {
 
     if (!this.isAlive) {
       // Анімація смерті, якщо вона ще не почалася
-      if (!this.hasDied) { // Перевірка, чи завершилася анімація смерті
+      if (!this.hasDied) {
+        // Перевірка, чи завершилася анімація смерті
         this.switchSprite("goblin", "deathLeft");
-
+        player.isChoosingChests = true;
         // Додаємо двері лише при першій перевірці
-        doors.push(new Sprite({
-          imgSrc: "./data/images/doorOpening.png",
-          x: 800,
-          y: 360,
-          frameRate: 4,
-          framesSpeed: 14,
-          loop: false,
-          autoplay: false,
-        }));
+        doors.push(
+          new Sprite({
+            imgSrc: "./data/images/doorOpening.png",
+            x: 800,
+            y: 360,
+            frameRate: 4,
+            framesSpeed: 14,
+            loop: false,
+            autoplay: false,
+          })
+        );
 
         // Встановлюємо прапорець смерті і завершуємо анімацію
         this.hasDied = true;
@@ -148,10 +151,7 @@ export class Goblin extends Boss {
     this.poison.x += horizontalFlightLength / this.speedOfPoisonFlying;
     this.poison.y += verticalFlightLength / this.speedOfPoisonFlying;
 
-    if (
-      this.didPoisonReachPlayerStartPos(playerStartPos) ||
-      this.didPoisonReachPlayer()
-    ) {
+    if (this.didPoisonReachPlayerStartPos(playerStartPos) || this.didPoisonReachPlayer()) {
       if (this.didPoisonReachPlayer()) {
         this.doDamage(this.poisonDamage);
       }

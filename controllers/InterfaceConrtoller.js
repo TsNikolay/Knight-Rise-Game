@@ -2,17 +2,21 @@ import { Sprite } from "../entities/Sprite.js";
 import { canvas, player } from "../main.js";
 import { KeysController } from "./KeysController.js";
 import { GameController } from "./GameController.js";
+import { getRandomNumberFrom1to3 } from "../utils/random.js";
 
 export class InterfaceController {
   static hearts = [];
   static healthBar;
   static defeatModal;
-
+  static chestsModal;
+  static chestNothingModal;
+  static chestCureModal;
   static heartsAmount = 5;
   constructor() {}
 
-  static createHearts() {
-    for (let i = 1; i <= this.heartsAmount; i++) {
+  static createHearts(currentHeartsAmount) {
+    this.hearts = [];
+    for (let i = 1; i <= currentHeartsAmount; i++) {
       const offset = 3;
       const heart = new Sprite({
         imgSrc: "./data/images/GUI/heart.png",
@@ -55,10 +59,48 @@ export class InterfaceController {
     });
   }
 
+  static createChestsModal() {
+    this.chestsModal = new Sprite({
+      imgSrc: "./data/images/GUI/chestsModal.png",
+      x: 0,
+      y: 0,
+      frameRate: 1,
+      framesSpeed: 15,
+      loop: false,
+      autoplay: false,
+    });
+  }
+
+  static createChestsNothingModal() {
+    this.chestNothingModal = new Sprite({
+      imgSrc: "./data/images/GUI/chestNothing.png",
+      x: 0,
+      y: 0,
+      frameRate: 1,
+      framesSpeed: 15,
+      loop: false,
+      autoplay: false,
+    });
+  }
+  static createChestsCureModal() {
+    this.chestCureModal = new Sprite({
+      imgSrc: "./data/images/GUI/chestCure.png",
+      x: 0,
+      y: 0,
+      frameRate: 1,
+      framesSpeed: 15,
+      loop: false,
+      autoplay: false,
+    });
+  }
+
   static createInterface() {
     this.createHealthBar();
-    this.createHearts();
+    this.createHearts(this.heartsAmount);
     this.createDefeatModal();
+    this.createChestsModal();
+    this.createChestsNothingModal();
+    this.createChestsCureModal();
   }
 
   static draw() {
@@ -70,34 +112,59 @@ export class InterfaceController {
     if (!player.isAlive) {
       this.defeatModal.draw();
     }
+
+    if (player.chestWasChosen) {
+      player.isVisible = false;
+      if (player.chosenChestPrize === "Cure") {
+        this.chestCureModal.draw();
+      } else if (player.chosenChestPrize === "Nothing") {
+        this.chestNothingModal.draw();
+      }
+      setTimeout(() => {
+        player.chosenChestPrize === "";
+        player.isChoosingChests = false;
+        player.chestWasChosen = false;
+        player.isVisible = true;
+      }, 3000);
+    } else if (player.isChoosingChests) {
+      player.isVisible = false;
+      this.chestsModal.draw();
+    } else {
+      player.isVisible = true;
+    }
+  }
+
+  static recoveryOfHealth(currentHealth) {
+    const healthInOneHeart = 20;
+    const currentHeartAmount = currentHealth / healthInOneHeart;
+    this.createHearts(currentHeartAmount);
   }
 
   static lossOfHealth(lostHealth) {
     //Если урон больше чем у игрока осталось здоровья, приравняем занчения чтоб не выйти в минусовые сердечки
-    console.log("Lost health: " + lostHealth)
-    console.log("Player health: " + player.health)
-    console.log("=========")
-    if( lostHealth > player.health) {
-      lostHealth = player.health
-    } 
-
-      //  Например нанесли 30 урона игроку
-      //  У игрока 10 пол чердечек (5 сердечек)
-      //  100 здоровья всего
-      //  Значит 1 полcердечко это 10 урона
-      //  Значит должно снести 3 пол чердечка
-      
-      const healthInOneSemiHeart = 10;
-      const amountOfLostSemiHeart = lostHealth / healthInOneSemiHeart
-
-      for(let i = 0; i < amountOfLostSemiHeart; i++){
-        const heart = this.hearts.findLast(heart => heart.currentFrame != heart.frameRate - 1); //Останнє не пусте сердце праворуч 
-        if (heart.currentFrame !== heart.frameRate - 1) {
-          heart.currentFrame++;
-          heart.updateFrames();
-        }
+    console.log("Lost health: " + lostHealth);
+    console.log("Player health: " + player.health);
+    console.log("=========");
+    if (lostHealth > player.health) {
+      lostHealth = player.health;
     }
-    
+
+    // Наприклад нанесли 30 шкоди гравцю
+    // У гравця 10 півсердечок (5 сердець)
+    // 100 здоров'я всього
+    // Значить 1 півсерце це 10 шкоди
+    // Значить має віднятися 3 півсердечка
+
+    const healthInOneSemiHeart = 10;
+    const amountOfLostSemiHeart = lostHealth / healthInOneSemiHeart;
+
+    for (let i = 0; i < amountOfLostSemiHeart; i++) {
+      const heart = this.hearts.findLast((heart) => heart.currentFrame != heart.frameRate - 1); //Останнє не пусте сердце праворуч
+      if (heart.currentFrame !== heart.frameRate - 1) {
+        heart.currentFrame++;
+        heart.updateFrames();
+      }
+    }
   }
 
   static fullRecovery() {
@@ -109,9 +176,27 @@ export class InterfaceController {
   }
 
   static handleInterfaceKeysInput() {
-    if (KeysController.keys.e.pressed) {
-      if (!player.isAlive) {
-        GameController.resetGame();
+    if (KeysController.keys.e.pressed && !player.isAlive) {
+      GameController.resetGame();
+    }
+
+    if (player.isChoosingChests) {
+      const numberOfChestWithPrize = getRandomNumberFrom1to3();
+      const keys = KeysController.keys;
+
+      // Отримуємо вибір гравця
+      const playerChoice = keys.one.pressed ? 1 : keys.two.pressed ? 2 : keys.three.pressed ? 3 : 0;
+
+      if (playerChoice !== 0) {
+        if (playerChoice === numberOfChestWithPrize) {
+          player.heal(40);
+          this.recoveryOfHealth(player.health);
+          player.chosenChestPrize = "Cure";
+        } else {
+          player.chosenChestPrize = "Nothing";
+        }
+
+        player.chestWasChosen = true;
       }
     }
   }

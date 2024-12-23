@@ -1,12 +1,5 @@
 import { canvas, context, player } from "../main.js";
-
-import {
-  boss,
-  doors,
-  ladders,
-  levelBackground,
-  levelCollisionsCells,
-} from "../data/levelsData.js";
+import { boss, doors, ladders, levelBackground, levelCollisionsCells } from "../data/levelsData.js";
 import { InterfaceController } from "./InterfaceConrtoller.js";
 
 export class CanvasController {
@@ -37,9 +30,12 @@ export class CanvasController {
 
       InterfaceController.draw();
 
-      player.draw();
-      player.update();
-      player.handleMovementKeysInput();
+      if (player.isVisible) {
+        player.draw();
+        player.update();
+        player.handleMovementKeysInput();
+      }
+
       InterfaceController.handleInterfaceKeysInput();
     }
 

@@ -72,7 +72,7 @@ export let levels = {
       });
 
       levelCollisionsCells = createCollisionsArray(collisionsLevel1);
-      doors = [ ]; //Пока гоблин не убит двери нету
+      doors = []; //Пока гоблин живий, дверей для виходу немає
 
       ladders = [
         new Sprite({

@@ -1,26 +1,26 @@
 import { KeysController } from "../controllers/KeysController.js";
 import { Sprite } from "./Sprite.js";
 import { Character } from "./Character.js";
-import {
-  boss,
-  doors,
-  ladders,
-  levelCollisionsCells,
-} from "../data/levelsData.js";
+import { boss, doors, ladders, levelCollisionsCells } from "../data/levelsData.js";
 import { context } from "../main.js";
 import { checkCollisions, checkOverlapping } from "../utils/CollisionsUtils.js";
 
 export class Player extends Character {
   constructor(options) {
     super(options);
-    this.jumpHeight = -22;       // Висота стрибка
-    this.runningSpeed = 5;       // Швидкість бігу
-    this.climbingSpeed = -5;     // Швидкість підйому по драбині
-    this.swordDamage = 5;        // Шкода від меча
+    this.maxHealth = 100;
+    this.jumpHeight = -22; // Висота стрибка
+    this.runningSpeed = 5; // Швидкість бігу
+    this.climbingSpeed = -5; // Швидкість підйому по драбині
+    this.swordDamage = 5; // Шкода від меча
     this.isInvulnerable = false; // Прапорець невразливості
     this.wasThereShieldAttempt = false; // Прапорець для спроби захисту
+
+    this.isChoosingChests = false;
+    this.chestWasChosen = false;
+    this.chosenChestPrize = "";
   }
-  
+
   // Секція: Управління рухом
   // Обробка натискання клавіш для руху персонажа
   handleMovementKeysInput() {
@@ -193,12 +193,7 @@ export class Player extends Character {
     context.fillStyle = "rgba(0,0,255,0.3)";
     context.fillRect(this.x, this.y, this.width, this.height);
     context.fillStyle = "rgba(0,255,0,0.3)";
-    context.fillRect(
-      this.hitbox.x,
-      this.hitbox.y,
-      this.hitbox.width,
-      this.hitbox.height,
-    );
+    context.fillRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
   }
 
   // Секція: Життєвий цикл
@@ -210,12 +205,21 @@ export class Player extends Character {
 
   // Скидання властивостей персонажа
   resetProperties() {
-    this.health = 100;
+    this.health = this.maxHealth;
     this.isAlive = true;
     this.x = 100;
     this.y = 100;
     this.switchSprite("player", "inactionRight");
     this.lastDirection = "right";
+  }
+
+  //Лікування
+  heal(healthPoints) {
+    if (this.health + healthPoints > this.maxHealth) {
+      this.health = this.maxHealth;
+    } else {
+      this.health += healthPoints;
+    }
   }
 
   // Секція: Атака
@@ -238,7 +242,21 @@ export class Player extends Character {
     if (this.didSwordReachBoss()) {
       this.doDamage(this.swordDamage);
     }
+    if (boss && !boss.isAlive && !this.chestWasChosen) {
+      this.disapearToChooseChest();
+    }
   }
+
+  disapearToChooseChest() {
+    this.isVisible = false;
+    this.isChoosingChests = true;
+  }
+
+  appearAfterChoosingChest() {
+    this.isVisible = true;
+    this.isChoosingChests = false;
+  }
+  _;
 
   // Перевірка, чи досяг меч босса
   didSwordReachBoss() {

@@ -1,22 +1,11 @@
 import { context } from "../main.js";
 
 export class Sprite {
-  constructor({
-    imgSrc,
-    x,
-    y,
-    width,
-    height,
-    animations,
-    frameRate = 1,
-    framesSpeed,
-    loop = true,
-    autoplay = true,
-  }) {
+  constructor({ imgSrc, x, y, width, height, animations, frameRate = 1, framesSpeed, loop = true, autoplay = true }) {
     this.x = x;
     this.y = y;
     this.isLoaded = false;
-
+    this.isVisible = true;
     if (imgSrc) {
       this.image = new Image();
       this.image.onload = () => {
@@ -58,19 +47,9 @@ export class Sprite {
 
   draw() {
     if (!this.isLoaded) return;
-
+    if (!this.isVisible) return;
     if (this.image) {
-      context.drawImage(
-        this.image,
-        this.width * this.currentFrame,
-        0,
-        this.width,
-        this.height,
-        this.x,
-        this.y,
-        this.width,
-        this.height,
-      );
+      context.drawImage(this.image, this.width * this.currentFrame, 0, this.width, this.height, this.x, this.y, this.width, this.height);
       this.updateFrames();
     } else {
       this.drawShape();
@@ -95,10 +74,7 @@ export class Sprite {
     }
 
     if (this.currentAnimation && this.currentAnimation.onComplete) {
-      if (
-        this.currentFrame === this.frameRate - 1 &&
-        !this.currentAnimation.isActive
-      ) {
+      if (this.currentFrame === this.frameRate - 1 && !this.currentAnimation.isActive) {
         this.currentAnimation.onComplete();
         this.currentAnimation.isActive = true;
       }

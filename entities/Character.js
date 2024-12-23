@@ -1,24 +1,17 @@
 import { Sprite } from "./Sprite.js";
 import { KeysController } from "../controllers/KeysController.js";
-import {
-  boss,
-  doors,
-  ladders,
-  levelCollisionsCells,
-} from "../data/levelsData.js";
+import { levelCollisionsCells } from "../data/levelsData.js";
 import { checkCollisions, checkOverlapping } from "../utils/CollisionsUtils.js";
 
 export class Character extends Sprite {
   constructor(options) {
     super(options);
     this.health = options.health || 100; // Здоров'я персонажа
-    this.isAlive = true;                  // Прапорець, чи живий персонаж
-    this.velocity = { x: 0, y: 0 };       // Швидкість персонажа по x та y
-    this.gravity = 1;                     // Гравітація для персонажа
-    this.doWeCheckCollisions = true;      // Прапорець перевірки зіткнень
+    this.isAlive = true; // Прапорець, чи живий персонаж
+    this.velocity = { x: 0, y: 0 }; // Швидкість персонажа по x та y
+    this.gravity = 1; // Гравітація для персонажа
+    this.doWeCheckCollisions = true; // Прапорець перевірки зіткнень
   }
-
-
 
   // Секція: Основні методи
   // Метод оновлення стану персонажа
@@ -37,7 +30,7 @@ export class Character extends Sprite {
       if (this.doWeCheckCollisions) {
         this.handleVerticalCollisions(levelCollisionsCells);
       }
-      this.doWeCheckCollisions = true;  
+      this.doWeCheckCollisions = true;
     }
   }
 
@@ -49,7 +42,7 @@ export class Character extends Sprite {
 
   // Метод отримання ушкоджень
   takeDamage(damage) {
-    if (this.isInvulnerable) return;  // Якщо персонаж невразливий, ушкодження не застосовується
+    if (this.isInvulnerable) return; // Якщо персонаж невразливий, ушкодження не застосовується
     this.health -= damage;
     if (this.health <= 0) {
       this.death();
@@ -60,8 +53,6 @@ export class Character extends Sprite {
   death() {
     this.isAlive = false;
   }
-
-
 
   // Секція: Обробка зіткнень
   // Обробка горизонтальних зіткнень з блоками
@@ -120,8 +111,6 @@ export class Character extends Sprite {
     }
   }
 
-
-
   // Секція: Переміщення і стрибки
   // Застосування гравітації до персонажа
   applyGravity() {
@@ -161,8 +150,6 @@ export class Character extends Sprite {
     this.velocity.y = -this.climbingSpeed;
   }
 
-
-  
   // Секція: Управління анімацією
   // Перемикання анімації для персонажа
   switchSprite(character, animation) {

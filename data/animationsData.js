@@ -127,6 +127,6 @@ export const animationsData = {
       framesSpeed: 15,
       loop: false,
       imageSrc: "./data/images/goblin_sprites/Goblin_Death_Right.png",
-    }
+    },
   },
 };

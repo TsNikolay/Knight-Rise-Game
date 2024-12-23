@@ -5,6 +5,9 @@ export class KeysController {
     s: { pressed: false },
     d: { pressed: false },
     e: { pressed: false },
+    one: { pressed: false },
+    two: { pressed: false },
+    three: { pressed: false },
     leftMouseButton: { pressed: false },
     rightMouseButton: { pressed: false },
   };
@@ -29,6 +32,15 @@ export class KeysController {
         case "KeyE":
           this.keys.e.pressed = true;
           break;
+        case "Digit1":
+          this.keys.one.pressed = true;
+          break;
+        case "Digit2":
+          this.keys.two.pressed = true;
+          break;
+        case "Digit3":
+          this.keys.three.pressed = true;
+          break;
       }
     });
   }
@@ -51,28 +63,36 @@ export class KeysController {
         case "KeyE":
           this.keys.e.pressed = false;
           break;
+        case "Digit1":
+          this.keys.one.pressed = false;
+          break;
+        case "Digit2":
+          this.keys.two.pressed = false;
+          break;
+        case "Digit3":
+          this.keys.three.pressed = false;
+          break;
       }
     });
   }
 
   static listenMouseClick() {
     window.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
+      event.preventDefault();
     });
 
     window.addEventListener("mousedown", (event) => {
-        if (event.button === 0) {
-            this.keys.leftMouseButton.pressed = true; 
-        } else if (event.button === 2) {
-            this.keys.rightMouseButton.pressed = true;
-        }
+      if (event.button === 0) {
+        this.keys.leftMouseButton.pressed = true;
+      } else if (event.button === 2) {
+        this.keys.rightMouseButton.pressed = true;
+      }
     });
 
     window.addEventListener("mouseup", (event) => {
       if (event.button === 2) {
-          this.keys.rightMouseButton.pressed = false;
+        this.keys.rightMouseButton.pressed = false;
       }
-  });
-}
-
+    });
+  }
 }
