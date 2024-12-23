@@ -141,10 +141,6 @@ export class InterfaceController {
   }
 
   static lossOfHealth(lostHealth) {
-    //Если урон больше чем у игрока осталось здоровья, приравняем занчения чтоб не выйти в минусовые сердечки
-    console.log("Lost health: " + lostHealth);
-    console.log("Player health: " + player.health);
-    console.log("=========");
     if (lostHealth > player.health) {
       lostHealth = player.health;
     }
@@ -187,7 +183,7 @@ export class InterfaceController {
       // Отримуємо вибір гравця
       const playerChoice = keys.one.pressed ? 1 : keys.two.pressed ? 2 : keys.three.pressed ? 3 : 0;
 
-      if (playerChoice !== 0) {
+      if (playerChoice !== 0 && !player.chestWasChosen) {
         if (playerChoice === numberOfChestWithPrize) {
           player.heal(40);
           this.recoveryOfHealth(player.health);
@@ -195,7 +191,6 @@ export class InterfaceController {
         } else {
           player.chosenChestPrize = "Nothing";
         }
-
         player.chestWasChosen = true;
       }
     }
