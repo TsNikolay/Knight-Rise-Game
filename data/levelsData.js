@@ -63,6 +63,7 @@ export let levels = {
       player.preventInput = false;
       player.x = 100;
       player.y = 120;
+      player.chestWasChosen = false;
       if (player.currentAnimation) player.currentAnimation.isActive = false;
 
       levelBackground = new Sprite({

@@ -14,13 +14,15 @@ export class InterfaceController {
   static heartsAmount = 5;
   constructor() {}
 
-  static createHearts(currentHeartsAmount) {
+  static updateHearts(currentSemiHeartsAmount) {
     this.hearts = [];
-    for (let i = 1; i <= currentHeartsAmount; i++) {
-      const offset = 3;
+    const offset = 3; // Отступ между сердцами
+
+    // Добавляем полные сердца
+    for (let i = 0; i < Math.floor(currentSemiHeartsAmount / 2); i++) {
       const heart = new Sprite({
         imgSrc: "./data/images/GUI/heart.png",
-        x: 665 + i * (20 + offset),
+        x: 665 + (i + 1) * (20 + offset),
         y: 25,
         width: 20,
         height: 19,
@@ -31,6 +33,25 @@ export class InterfaceController {
       });
       this.hearts.push(heart);
     }
+
+    // Проверяем, если есть половина сердца
+    if (currentSemiHeartsAmount % 2 === 1) {
+      const semiHeart = new Sprite({
+        imgSrc: "./data/images/GUI/heart.png",
+        x: 665 + Math.round(currentSemiHeartsAmount / 2) * (20 + offset),
+        y: 25,
+        width: 20,
+        height: 19,
+        frameRate: 3,
+        framesSpeed: 50,
+        loop: false,
+        autoplay: false,
+      });
+      semiHeart.currentFrame = 1; // Устанавливаем кадр для полусердца
+      this.hearts.push(semiHeart);
+    }
+
+    console.log(this.hearts);
   }
 
   static createHealthBar() {
@@ -96,7 +117,7 @@ export class InterfaceController {
 
   static createInterface() {
     this.createHealthBar();
-    this.createHearts(this.heartsAmount);
+    this.updateHearts(this.heartsAmount * 2);
     this.createDefeatModal();
     this.createChestsModal();
     this.createChestsNothingModal();
@@ -113,7 +134,7 @@ export class InterfaceController {
       this.defeatModal.draw();
     }
 
-    if (player.chestWasChosen) {
+    if (player.chestWasChosen && player.isChoosingChests) {
       player.isVisible = false;
       if (player.chosenChestPrize === "Cure") {
         this.chestCureModal.draw();
@@ -123,10 +144,11 @@ export class InterfaceController {
       setTimeout(() => {
         player.chosenChestPrize === "";
         player.isChoosingChests = false;
-        player.chestWasChosen = false;
         player.isVisible = true;
       }, 3000);
-    } else if (player.isChoosingChests) {
+      return;
+    }
+    if (player.isChoosingChests) {
       player.isVisible = false;
       this.chestsModal.draw();
     } else {
@@ -135,9 +157,9 @@ export class InterfaceController {
   }
 
   static recoveryOfHealth(currentHealth) {
-    const healthInOneHeart = 20;
-    const currentHeartAmount = currentHealth / healthInOneHeart;
-    this.createHearts(currentHeartAmount);
+    const healthInOneSemiHeart = 10;
+    const currentSemiHeartAmount = currentHealth / healthInOneSemiHeart;
+    this.updateHearts(currentSemiHeartAmount);
   }
 
   static lossOfHealth(lostHealth) {
@@ -145,30 +167,14 @@ export class InterfaceController {
       lostHealth = player.health;
     }
 
-    // Наприклад нанесли 30 шкоди гравцю
-    // У гравця 10 півсердечок (5 сердець)
-    // 100 здоров'я всього
-    // Значить 1 півсерце це 10 шкоди
-    // Значить має віднятися 3 півсердечка
-
     const healthInOneSemiHeart = 10;
     const amountOfLostSemiHeart = lostHealth / healthInOneSemiHeart;
-
-    for (let i = 0; i < amountOfLostSemiHeart; i++) {
-      const heart = this.hearts.findLast((heart) => heart.currentFrame != heart.frameRate - 1); //Останнє не пусте сердце праворуч
-      if (heart.currentFrame !== heart.frameRate - 1) {
-        heart.currentFrame++;
-        heart.updateFrames();
-      }
-    }
+    const currentSemiHeartsAmount = player.health / healthInOneSemiHeart - amountOfLostSemiHeart;
+    this.updateHearts(currentSemiHeartsAmount);
   }
 
   static fullRecovery() {
-    for (let i = 0; i < this.hearts.length; i++) {
-      const heart = this.hearts[i];
-      heart.currentFrame = 0;
-      heart.updateFrames();
-    }
+    this.updateHearts(this.heartsAmount * 2);
   }
 
   static handleInterfaceKeysInput() {

@@ -9,7 +9,7 @@ export class Player extends Character {
   constructor(options) {
     super(options);
     this.maxHealth = 100;
-    this.jumpHeight = -22; // Висота стрибка
+    this.jumpHeight = -22; // Висота стрибка (від'ємна бо вісь ігрек інвертована в canvas)
     this.runningSpeed = 5; // Швидкість бігу
     this.climbingSpeed = -5; // Швидкість підйому по драбині
     this.swordDamage = 5; // Шкода від меча
